@@ -1,6 +1,7 @@
 from django.contrib import admin
-from .models import Chapter
 
-from .models import Course #Import my User model (Teacher/Student)
-admin.site.register(Course) #Registers my User model to the admin page so I can add teachers and students through the admin interface
-admin.site.register(Chapter) #Registers my User model to the admin page 
+
+from .models import Course 
+from .models import Chapter 
+admin.site.register(Course) #Registers the Course model with the Django admin site, allowing administrators to manage courses through the admin interface.
+admin.site.register(Chapter)  #Registers the Chapter model with the Django admin site, allowing administrators to manage chapters through the admin interface.
