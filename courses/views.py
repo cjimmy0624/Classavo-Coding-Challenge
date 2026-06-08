@@ -1,4 +1,5 @@
 from rest_framework import generics, permissions
+from rest_framework.response import Response
 from .models import Course,Chapter, Enrollment
 from .serializers import CourseSerializer, ChapterSerializer, EnrollmentSerializer
 
@@ -39,3 +40,18 @@ class EnrollmentCreateView(generics.CreateAPIView):
     def perform_create(self, serializer):
         course_id = self.kwargs['course_id']
         serializer.save(student=self.request.user, course_id=course_id) #Student is set to the user creating the enrollment and course is set to the course the enrollment belongs to
+
+class CourseDetailView(generics.RetrieveAPIView):
+    queryset = Course.objects.all()
+    serializer_class = CourseSerializer
+    permission_classes = [permissions.IsAuthenticated] #Course details viewed by authorized users only
+
+    def retrieve(self, request, *args, **kwargs):
+        course = self.get_object()
+        chapters = course.chapters.all().order_by('order') #Get all chapters in the course ordered by their order field
+
+        return Response({
+            "course": CourseSerializer(course).data,
+            "chapters": ChapterSerializer(chapters, many=True).data
+        })
+    
