@@ -2,99 +2,104 @@ import React, { useMemo, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../../api/axios';
 
-import { Plate, PlateContent, createPlateEditor } from '@udecode/plate-common';
+// ✅ correct Plate v48 import
+import {
+  Plate,
+  createPlateEditor
+} from '@udecode/plate/react';
 
-import { createParagraphPlugin } from '@udecode/plate-paragraph';
-import { createHeadingPlugin } from '@udecode/plate-heading';
-import { createBasicMarksPlugin } from '@udecode/plate-basic-marks';
+import { ParagraphPlugin } from '@udecode/plate-paragraph';
+import { HeadingPlugin } from '@udecode/plate-heading';
+import { BasicMarksPlugin } from '@udecode/plate-basic-marks';
 
 function CreateChapter() {
-    const { id } = useParams(); // course id
-    const navigate = useNavigate();
+  const { id } = useParams();
+  const navigate = useNavigate();
 
-    const [title, setTitle] = useState('');
-    const [isPublic, setIsPublic] = useState(false);
+  const [title, setTitle] = useState('');
+  const [isPublic, setIsPublic] = useState(false);
 
-    // Plate editor setup
-    const editor = useMemo(() =>
-        createPlateEditor({
-            plugins: [
-                createParagraphPlugin(),
-                createHeadingPlugin(),
-                createBasicMarksPlugin()
-            ],
-            value: [
-                {
-                    type: 'p',
-                    children: [{ text: '' }]
-                }
-            ]
-        }),
-        []
-    );
+  // ✅ editor (correct v48 style)
+  const editor = useMemo(
+    () =>
+      createPlateEditor({
+        plugins: [
+          ParagraphPlugin,
+          HeadingPlugin,
+          BasicMarksPlugin
+        ],
+        value: [
+          {
+            type: 'p',
+            children: [{ text: '' }]
+          }
+        ]
+      }),
+    []
+  );
 
-    const handleSubmit = async () => {
-        try {
-            await api.post(`/courses/${id}/chapters/create/`, {
-                title,
-                content: JSON.stringify(editor.children),
-                publicOrPrivate: isPublic
-            });
+  const handleSubmit = async () => {
+    try {
+      await api.post(`/courses/${id}/chapters/create/`, {
+        title,
+        content: JSON.stringify(editor.children),
+        publicOrPrivate: isPublic
+      });
 
-            // go back to course page
-            navigate(`/course/${id}`);
-        } catch (err) {
-            console.log(err);
-        }
-    };
+      navigate(`/course/${id}`);
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
-    return (
-        <div style={{ padding: '20px' }}>
-            <h1>Create Chapter</h1>
+  return (
+    <div style={{ padding: 20 }}>
+      <h1>Create Chapter</h1>
 
-            {/* TITLE */}
-            <input
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                placeholder="Chapter title"
-                style={{ width: '300px', padding: '8px' }}
-            />
+      <input
+        placeholder="Chapter title"
+        value={title}
+        onChange={(e) => setTitle(e.target.value)}
+        style={{ width: 300, padding: 8 }}
+      />
 
-            <br /><br />
+      <br /><br />
 
-            {/* VISIBILITY */}
-            <label>
-                <input
-                    type="checkbox"
-                    checked={isPublic}
-                    onChange={(e) => setIsPublic(e.target.checked)}
-                />
-                Public Chapter
-            </label>
+      <label>
+        <input
+          type="checkbox"
+          checked={isPublic}
+          onChange={(e) => setIsPublic(e.target.checked)}
+        />
+        Public Chapter
+      </label>
 
-            <br /><br />
+      <br /><br />
 
-            {/* EDITOR */}
-            <div style={{ border: '1px solid #ccc', padding: '10px' }}>
-                <Plate editor={editor}>
-                    <PlateContent
-                        placeholder="Write your chapter content..."
-                        style={{ minHeight: '200px' }}
-                    />
-                </Plate>
-            </div>
+      {/* ✅ Plate editor */}
+      <Plate editor={editor}>
+        <div
+          contentEditable
+          suppressContentEditableWarning
+          style={{
+            minHeight: 200,
+            border: '1px solid #ccc',
+            padding: 10
+          }}
+        />
+      </Plate>
 
-            <br />
+      <br />
 
-            <button onClick={handleSubmit}>
-                Save Chapter
-            </button>
+      <button onClick={handleSubmit}>
+        Save Chapter
+      </button>
 
-            <button onClick={() => navigate(`/course/${id}`)} style={{ marginLeft: 10 }}>
-                Cancel
-            </button>
-        </div>
-    );
+      <button onClick={() => navigate(`/course/${id}`)} style={{ marginLeft: 10 }}>
+        Cancel
+      </button>
+    </div>
+  );
 }
 
 export default CreateChapter;
