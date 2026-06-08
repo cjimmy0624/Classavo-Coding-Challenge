@@ -12,7 +12,7 @@ function InstructorDashboard() {
 
     const fetchCourses = async () => {
         try {
-            const res = await api.get('/api/courses/');
+            const res = await api.get('/courses/');
             setCourses(res.data);
         } catch (err) {
             console.log(err);
