@@ -14,6 +14,8 @@ function Login() {
             const response = await api.post('/users/login/', { username, password });
             localStorage.setItem('accessToken', response.data.access);
             localStorage.setItem("refreshToken", response.data.refresh);
+            localStorage.setItem('role', response.data.role);
+            localStorage.setItem('username', username);
             navigate('/courses');
         } catch (err) {
             setError('Invalid username or password');

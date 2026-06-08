@@ -33,6 +33,7 @@ function CourseList() {
 
     return (
         <div className="container">
+            {console.log("COMPONENT RENDERED", role)}
             <h1>Courses</h1>
             {error && <p style={{color: 'red'}}>{error}</p>}
             {role === 'instructor' && (
