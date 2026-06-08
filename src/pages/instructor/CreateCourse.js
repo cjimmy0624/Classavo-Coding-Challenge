@@ -12,7 +12,7 @@ function CreateCourse() {
         e.preventDefault();
 
         try {
-            await api.post('/api/courses/', {
+            await api.post('/courses/', {
                 title,
                 description
             });
