@@ -4,9 +4,16 @@ from .models import Course,Chapter, Enrollment
 from .serializers import CourseSerializer, ChapterSerializer, EnrollmentSerializer
 
 class CourseListView(generics.ListAPIView):
-    queryset = Course.objects.all()
-    serializer_class = CourseSerializer
-    permission_classes = [permissions.IsAuthenticated] #Course viewed by authorized users only
+        serializer_class = CourseSerializer
+        permission_classes = [permissions.IsAuthenticated]
+
+        def get_queryset(self):
+            user = self.request.user
+
+            if hasattr(user, "role") and user.role == "instructor":
+                return Course.objects.filter(instructor=user)
+
+            return Course.objects.all()
 
 class CourseCreateView(generics.CreateAPIView):
     queryset = Course.objects.all()
@@ -23,15 +30,20 @@ class ChapterListView(generics.ListAPIView):
 
     def get_queryset(self):
         course_id = self.kwargs['course_id']
-        return Chapter.objects.filter(course_id=course_id,publicOrPrivate=True) #List of chapters in a course
-    
+        return Chapter.objects.filter(course_id=course_id, is_public=True)  
+      
 class ChapterCreateView(generics.CreateAPIView):
     serializer_class = ChapterSerializer
     permission_classes = [permissions.IsAuthenticated] #Chapter created by authorized users only
 
     def perform_create(self, serializer):
         course_id = self.kwargs['course_id']
-        serializer.save(course_id=course_id) #Course is set to the course the chapter belongs to
+        course = Course.objects.get(id=course_id)
+
+        if course.instructor != self.request.user:
+            raise PermissionDenied("Not allowed")
+
+        serializer.save(course=course)
 
 class ChapterDetailView(generics.RetrieveAPIView):
     queryset = Chapter.objects.all()

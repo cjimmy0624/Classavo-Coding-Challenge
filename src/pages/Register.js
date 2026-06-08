@@ -14,7 +14,7 @@ function Register() {
         e.preventDefault();
         try {
             await api.post('/users/register/', { username, email, password, role });
-            navigate('/');
+            navigate('/login');
         } catch (err) {
             console.log("FULL ERROR:", err.response?.data);
             console.log("STATUS:", err.response?.status);
