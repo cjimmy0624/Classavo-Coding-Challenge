@@ -5,19 +5,41 @@ import { useNavigate, Link } from 'react-router-dom';
 function Login() {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
-    const [role, setRole] = useState('student');
     const [error, setError] = useState('');
     const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
         try {
-            const response = await api.post('/users/login/', { username, password });
+            const response = await api.post('/users/login/', {
+                username,
+                password
+            });
+
+            // store tokens
             localStorage.setItem('accessToken', response.data.access);
             localStorage.setItem('refreshToken', response.data.refresh);
+
+            // role MUST come from backend
+            const role = response.data.role;
+
+            if (!role) {
+                setError("No role returned from server");
+                return;
+            }
+
             localStorage.setItem('role', role);
-            navigate('/courses');
+
+            // redirect based on role
+            if (role === 'instructor') {
+                navigate('/instructor');
+            } else {
+                navigate('/student');
+            }
+
         } catch (err) {
+            console.log(err);
             setError('Invalid username or password');
         }
     };
@@ -75,22 +97,6 @@ function Login() {
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                     />
-
-                    <select
-                        value={role}
-                        onChange={(e) => setRole(e.target.value)}
-                        style={{
-                            width: "100%",
-                            padding: "10px",
-                            margin: "10px 0",
-                            borderRadius: "5px",
-                            border: "1px solid #ccc",
-                            boxSizing: "border-box"
-                        }}
-                    >
-                        <option value="student">Student</option>
-                        <option value="instructor">Instructor</option>
-                    </select>
 
                     <button
                         style={{

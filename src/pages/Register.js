@@ -8,22 +8,38 @@ function Register() {
     const [password, setPassword] = useState('');
     const [role, setRole] = useState('student');
     const [error, setError] = useState('');
+
     const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
         try {
-            await api.post('/users/register/', { username, email, password, role });
-            navigate('/login');
+            // send data to backend
+            await api.post('/users/register/', {
+                username,
+                email,
+                password,
+                role
+            });
+
+            // redirect based on selected role
+            if (role === 'instructor') {
+                navigate('/instructor');
+            } else {
+                navigate('/student');
+            }
+
         } catch (err) {
             console.log("FULL ERROR:", err.response?.data);
             console.log("STATUS:", err.response?.status);
 
             setError(
-                JSON.stringify(err.response?.data) ||
-                "Registration failed. Please try again."
+                err.response?.data
+                    ? JSON.stringify(err.response.data)
+                    : "Registration failed. Please try again."
             );
-        } 
+        }
     };
 
     const styles = {
@@ -67,9 +83,6 @@ function Register() {
             cursor: 'pointer',
             fontWeight: 'bold'
         },
-        buttonHover: {
-            opacity: 0.9
-        },
         error: {
             color: 'red',
             fontSize: '14px',
@@ -96,6 +109,7 @@ function Register() {
                         placeholder="Username"
                         value={username}
                         onChange={(e) => setUsername(e.target.value)}
+                        required
                     />
 
                     <input
@@ -104,6 +118,7 @@ function Register() {
                         placeholder="Email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
+                        required
                     />
 
                     <input
@@ -112,6 +127,7 @@ function Register() {
                         placeholder="Password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
+                        required
                     />
 
                     <select
@@ -119,8 +135,8 @@ function Register() {
                         value={role}
                         onChange={(e) => setRole(e.target.value)}
                     >
-                        <option value="student">student</option>
-                        <option value="instructor">instructor</option>
+                        <option value="student">Student</option>
+                        <option value="instructor">Instructor</option>
                     </select>
 
                     <button style={styles.button} type="submit">
@@ -129,8 +145,7 @@ function Register() {
                 </form>
 
                 <p style={styles.link}>
-                    Already have an account?{' '}
-                    <a href="/login">Login</a>
+                    Already have an account? <a href="/login">Login</a>
                 </p>
             </div>
         </div>
