@@ -13,11 +13,17 @@ function Register() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            await api.post('/users/register', { username, email, password, role });
+            await api.post('/users/register/', { username, email, password, role });
             navigate('/login');
         } catch (err) {
-            setError('Registration failed. Please try again.');
-        }  
+            console.log("FULL ERROR:", err.response?.data);
+            console.log("STATUS:", err.response?.status);
+
+            setError(
+                JSON.stringify(err.response?.data) ||
+                "Registration failed. Please try again."
+            );
+        } 
     };
 
     const styles = {
@@ -113,8 +119,8 @@ function Register() {
                         value={role}
                         onChange={(e) => setRole(e.target.value)}
                     >
-                        <option value="student">Student</option>
-                        <option value="instructor">Instructor</option>
+                        <option value="student">student</option>
+                        <option value="instructor">instructor</option>
                     </select>
 
                     <button style={styles.button} type="submit">
