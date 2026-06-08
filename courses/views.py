@@ -33,6 +33,11 @@ class ChapterCreateView(generics.CreateAPIView):
         course_id = self.kwargs['course_id']
         serializer.save(course_id=course_id) #Course is set to the course the chapter belongs to
 
+class ChapterDetailView(generics.RetrieveAPIView):
+    queryset = Chapter.objects.all()
+    serializer_class = ChapterSerializer
+    permission_classes = [permissions.IsAuthenticated] #Chapter details viewed by authorized users only
+
 class EnrollmentCreateView(generics.CreateAPIView):
     serializer_class = EnrollmentSerializer
     permission_classes = [permissions.IsAuthenticated] #Enrollment created by authorized users only
