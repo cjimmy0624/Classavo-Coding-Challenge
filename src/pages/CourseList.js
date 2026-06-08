@@ -6,6 +6,9 @@ function CourseList() {
     const [courses, setCourses] = useState([]);
     const [error, setError] = useState('');
     const navigate = useNavigate();
+    const role = localStorage.getItem('role');
+
+    console.log("USER ROLE:", role);
 
     useEffect(() => {
         const fetchCourses = async () => {
@@ -30,20 +33,28 @@ function CourseList() {
 
     return (
         <div className="container">
-    <h1>Courses</h1>
-
-    {courses.map(course => (
-        <div
-            key={course.id}
-            className="card"
-            onClick={() => navigate(`/courses/${course.id}`)}
-            style={{ cursor: "pointer" }}
-        >
-            <h3>{course.title}</h3>
-            <p>{course.description}</p>
+            <h1>Courses</h1>
+            {error && <p style={{color: 'red'}}>{error}</p>}
+            {role === 'instructor' && (
+                <button onClick={() => navigate('/courses/create')}>
+                    + Create Course
+                </button>
+            )}
+            {courses.map(course => (
+                <div
+                    key={course.id}
+                    className="card"
+                    onClick={() => navigate(`/courses/${course.id}`)}
+                    style={{ cursor: "pointer" }}
+                >
+                    <h3>{course.title}</h3>
+                    <p>{course.description}</p>
+                    <button onClick={(e) => { e.stopPropagation(); handleCourseClick(course.id); }}>
+                        Enroll
+                    </button>
+                </div>
+            ))}
         </div>
-    ))}
-</div>
     );
 }   
 export default CourseList;
