@@ -4,17 +4,17 @@ from .models import Course, Chapter, Enrollment
 class CourseSerializer(serializers.ModelSerializer):
     class Meta:
         model = Course
-        fields = ['id', 'title', 'description', 'instructor','creationTime'] #Fields needed for each course
-        read_only_fields = ['instructor', 'creationTime'] #Instructor and creationTime are read-only
+        fields = ['id', 'title', 'description', 'instructor', 'creationTime']
+        read_only_fields = ['instructor', 'creationTime']
 
 class ChapterSerializer(serializers.ModelSerializer):
     class Meta:
         model = Chapter
-        fields = ['id', 'title', 'content', 'publicOrPrivate','order','course'] #Fields needed for each chapter
-        read_only_fields = ['course'] #Course and created_at are read-only
+        fields = ['id','title','content','publicOrPrivate','order','course']
+        read_only_fields = []  # course will be assigned in request or view
 
 class EnrollmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Enrollment
-        fields = ['id', 'student', 'course','enrollmentTime'] #Fields needed for each enrollment
-        read_only_fields = ['student','course','enrollmentTime'] #Student, course and enrollmentTime are read-only
+        fields = ['id', 'student', 'course', 'enrollmentTime']
+        read_only_fields = ['student', 'course', 'enrollmentTime']
