@@ -2,15 +2,12 @@ import React, { useMemo, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../../api/axios';
 
-// ✅ correct Plate v48 import
-import {
-  Plate,
-  createPlateEditor
-} from '@udecode/plate/react';
+import { Plate, createPlateEditor } from '@udecode/plate/react';
 
-import { ParagraphPlugin } from '@udecode/plate-paragraph';
-import { HeadingPlugin } from '@udecode/plate-heading';
-import { BasicMarksPlugin } from '@udecode/plate-basic-marks';
+import { createParagraphPlugin } from '@udecode/plate-paragraph';
+import { createHeadingPlugin } from '@udecode/plate-heading';
+
+import { createBoldPlugin, createItalicPlugin, createUnderlinePlugin } from '@udecode/plate-basic-marks';
 
 function CreateChapter() {
   const { id } = useParams();
@@ -19,14 +16,15 @@ function CreateChapter() {
   const [title, setTitle] = useState('');
   const [isPublic, setIsPublic] = useState(false);
 
-  // ✅ editor (correct v48 style)
   const editor = useMemo(
     () =>
       createPlateEditor({
         plugins: [
-          ParagraphPlugin,
-          HeadingPlugin,
-          BasicMarksPlugin
+          createParagraphPlugin(),
+          createHeadingPlugin(),
+          createBoldPlugin(),
+          createItalicPlugin(),
+          createUnderlinePlugin()
         ],
         value: [
           {
@@ -57,9 +55,9 @@ function CreateChapter() {
       <h1>Create Chapter</h1>
 
       <input
-        placeholder="Chapter title"
         value={title}
         onChange={(e) => setTitle(e.target.value)}
+        placeholder="Chapter title"
         style={{ width: 300, padding: 8 }}
       />
 
@@ -76,7 +74,6 @@ function CreateChapter() {
 
       <br /><br />
 
-      {/* ✅ Plate editor */}
       <Plate editor={editor}>
         <div
           contentEditable
