@@ -11,13 +11,12 @@ function App() {
     <Router>
       <Routes>
 
-        {/* Auth */}
-        <Route path="/login" element={<Login />} />
+        <Route path="/" element={<Login />} />
         <Route path="/register" element={<Register />} />
 
-        {/* LMS */}
         <Route path="/courses" element={<CourseList />} />
         <Route path="/courses/:id" element={<CourseDetail />} />
+
         <Route path="/chapters/:id" element={<ChapterDetail />} />
 
       </Routes>
