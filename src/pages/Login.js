@@ -9,18 +9,20 @@ function Login() {
     const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
-        e.preventDefault();
-        try {
-            const response = await api.post('/users/login/', { username, password });
-            localStorage.setItem('accessToken', response.data.access);
-            localStorage.setItem("refreshToken", response.data.refresh);
-            localStorage.setItem('role', response.data.role);
-            localStorage.setItem('username', username);
-            navigate('/courses');
-        } catch (err) {
-            setError('Invalid username or password');
-        }
-    };
+    e.preventDefault();
+    console.log("FORM SUBMITTED"); // add this line
+    try {
+        const response = await api.post('/users/login/', { username, password });
+        console.log("RESPONSE:", response.data);
+        localStorage.setItem('accessToken', response.data.access);
+        localStorage.setItem("refreshToken", response.data.refresh);
+        localStorage.setItem('role', response.data.role);
+        navigate('/courses');
+    } catch (err) {
+        console.log("ERROR:", err);
+        setError('Invalid username or password');
+    }
+};
 
     return (
     <div style={{
