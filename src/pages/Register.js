@@ -16,9 +16,8 @@ function Register() {
             await api.post('/users/register', { username, email, password, role });
             navigate('/login');
         } catch (err) {
-            console.log('Registration error:', err.response?.data || err.message);
-            setError(err.response?.data?.message || 'Registration failed. Please try again.');
-} 
+            setError('Registration failed. Please try again.');
+        }  
     };
 
     const styles = {

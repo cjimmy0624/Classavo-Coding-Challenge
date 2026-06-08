@@ -6,4 +6,4 @@ class User(AbstractUser):
 
     roleChoices = (('instructor', 'Instructor'), ('student', 'Student'),) #choices for users
     
-    role = models.CharField(max_length=20, choices=roleChoices) #added to dataset to differentiate between teachers and students
+    role = models.CharField(max_length=20,choices=roleChoices,default='student') #Default role is student
