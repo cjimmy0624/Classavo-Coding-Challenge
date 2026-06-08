@@ -12,8 +12,13 @@ function Login() {
         e.preventDefault();
         try {
             const response = await api.post('/users/login/', { username, password });
+            console.log("LOGIN DATA:", username, password);
+
             localStorage.setItem('accessToken', response.data.access);
             localStorage.setItem("refreshToken", response.data.refresh);
+            localStorage.setItem("role", response.data.role);
+            localStorage.setItem("username", response.data.username);
+            
             navigate('/courses');
         } catch (err) {
             setError('Invalid username or password');
