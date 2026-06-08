@@ -23,24 +23,37 @@ function InstructorDashboard() {
         <div style={{ padding: "20px" }}>
             <h1>Instructor Dashboard</h1>
 
+            {/* CREATE COURSE */}
             <button onClick={() => navigate('/create-course')}>
                 + Create Course
             </button>
 
+            {/* COURSE LIST */}
             <div style={{ marginTop: "20px" }}>
                 {courses.map(course => (
                     <div
                         key={course.id}
                         style={{
-                            padding: "10px",
+                            padding: "15px",
                             border: "1px solid #ccc",
                             marginTop: "10px",
-                            cursor: "pointer"
+                            borderRadius: "8px"
                         }}
-                        onClick={() => navigate(`/course/${course.id}`)}
                     >
                         <h3>{course.title}</h3>
                         <p>{course.description}</p>
+
+                        {/* ACTION BUTTONS */}
+                        <div style={{ marginTop: "10px", display: "flex", gap: "10px" }}>
+                            
+                            {/* Manage Course */}
+                            <button
+                                onClick={() => navigate(`/course/${course.id}`)}
+                            >
+                                Manage Course
+                            </button>
+
+                        </div>
                     </div>
                 ))}
             </div>
