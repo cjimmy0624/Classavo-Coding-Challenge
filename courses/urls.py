@@ -1,14 +1,21 @@
 from django.urls import path
-from .views import CourseListView, CourseCreateView,CourseDetailView, ChapterListView,ChapterCreateView,ChapterDetailView, EnrollmentCreateView
+from .views import (
+    CourseListCreateView,
+    CourseDetailView,
+    ChapterListView,
+    ChapterCreateView,
+    ChapterDetailView,
+    EnrollmentCreateView
+)
 
 urlpatterns = [
-    path('', CourseListView.as_view(), name='course-list'), #List of all courses URL
-    path('create/', CourseCreateView.as_view(), name='course-create'), #Creating a new course URL
+    path('courses/', CourseListCreateView.as_view()),
+    path('courses/<int:pk>/', CourseDetailView.as_view()),
 
-    path('<int:pk>/', CourseDetailView.as_view(), name='course-detail'), #Detail view of a specific course URL
+    path('courses/<int:course_id>/chapters/', ChapterListView.as_view()),
+    path('courses/<int:course_id>/chapters/create/', ChapterCreateView.as_view()),
 
-    path('<int:course_id>/chapters/', ChapterListView.as_view(), name='chapter-list'), #List of chapters in a course URL
-    path('<int:course_id>/chapters/create/', ChapterCreateView.as_view(), name='chapter-create'), #Creating a new chapter in a course URL
-    path('<int:course_id>/chapters/<int:pk>/', ChapterDetailView.as_view(), name='chapter-detail'), #Detail view of a specific chapter URL
-    path('<int:course_id>/enroll/', EnrollmentCreateView.as_view(), name='enrollment-create'), #Enrolling in a course URL
+    path('chapters/<int:pk>/', ChapterDetailView.as_view()),
+
+    path('courses/<int:course_id>/enroll/', EnrollmentCreateView.as_view()),
 ]
