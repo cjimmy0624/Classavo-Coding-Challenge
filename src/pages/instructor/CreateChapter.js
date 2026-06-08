@@ -4,11 +4,6 @@ import api from '../../api/axios';
 
 import { Plate, createPlateEditor } from '@udecode/plate/react';
 
-import { createParagraphPlugin } from '@udecode/plate-paragraph';
-import { createHeadingPlugin } from '@udecode/plate-heading';
-
-import { createBoldPlugin, createItalicPlugin, createUnderlinePlugin } from '@udecode/plate-basic-marks';
-
 function CreateChapter() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -19,13 +14,6 @@ function CreateChapter() {
   const editor = useMemo(
     () =>
       createPlateEditor({
-        plugins: [
-          createParagraphPlugin(),
-          createHeadingPlugin(),
-          createBoldPlugin(),
-          createItalicPlugin(),
-          createUnderlinePlugin()
-        ],
         value: [
           {
             type: 'p',
@@ -46,7 +34,8 @@ function CreateChapter() {
 
       navigate(`/course/${id}`);
     } catch (err) {
-      console.log(err);
+        console.log("ERROR RESPONSE:", err.response?.data);
+        console.log("STATUS:", err.response?.status);
     }
   };
 
