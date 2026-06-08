@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'courses.apps.CoursesConfig',
     'rest_framework',
     'rest_framework_simplejwt',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
@@ -52,6 +53,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware', #Allows cross-origin requests from frontend to backend
+    'django.middleware.common.CommonMiddleware', #Allows cross-origin requests from frontend to backend
 ]
 
 ROOT_URLCONF = 'lms_backend.urls'
@@ -124,3 +127,7 @@ STATIC_URL = 'static/'
 AUTH_USER_MODEL = 'users.User' #Tells Django to use my custom User model instead of the default one
 
 REST_FRAMEWORK = {'DEFAULT_AUTHENTICATION_CLASSES': ('rest_framework_simplejwt.authentication.JWTAuthentication',),} #Sendings info from frontend to backend 
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+]
