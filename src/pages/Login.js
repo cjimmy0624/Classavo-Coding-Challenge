@@ -112,9 +112,6 @@ function Login() {
                 <p style={{ textAlign: "center", marginTop: "10px" }}>
                     Don't have an account? <Link to="/register">Register here</Link>
                 </p>
-                <p style={{ textAlign: "center", marginTop: "5px", fontSize: "13px", color: "gray" }}>
-                    Not a student? Select <strong>Instructor</strong> above before logging in.
-                </p>
             </div>
         </div>
     );
