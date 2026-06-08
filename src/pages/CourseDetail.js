@@ -38,38 +38,27 @@ function CourseDetail() {
     if (error) return <p style={{ color: "red" }}>{error}</p>;
 
     return (
-        <div style={{ padding: "20px" }}>
-            {course && (
-                <div>
-                    <h1>{course.title}</h1>
-                    <p>{course.description}</p>
-                </div>
-            )}
-
-            <hr />
-
-            <h2>Chapters</h2>
-
-            {chapters.length === 0 && (
-                <p>No chapters available yet</p>
-            )}
-
-            {chapters.map((ch) => (
-                <div
-                    key={ch.id}
-                    onClick={() => navigate(`/chapters/${ch.id}`)}
-                    style={{
-                        cursor: "pointer",
-                        margin: "10px 0",
-                        padding: "10px",
-                        border: "1px solid #ccc",
-                        borderRadius: "6px"
-                    }}
-                >
-                    <strong>{ch.title}</strong>
-                </div>
-            ))}
+        <div className="container">
+    {course && (
+        <div className="card">
+            <h1>{course.title}</h1>
+            <p>{course.description}</p>
         </div>
+    )}
+
+    <h2>Chapters</h2>
+
+    {chapters.map(ch => (
+        <div
+            key={ch.id}
+            className="card"
+            onClick={() => navigate(`/chapters/${ch.id}`)}
+            style={{ cursor: "pointer" }}
+        >
+            <h3>{ch.title}</h3>
+        </div>
+    ))}
+</div>
     );
 }
 

@@ -29,18 +29,21 @@ function CourseList() {
     };
 
     return (
-        <div>
-            <h2>Available Courses</h2>
-            {error && <p style={{ color: 'red' }}>{error}</p>}
-            {courses.map(course => (
-                <div key={course.id}>
-                    <h3>{course.title}</h3>
-                    <p>{course.description}</p>
-                    <button onClick={() => navigate(`/courses/${course.id}`)}>View Details</button>
-                    <button onClick={() => handleCourseClick(course.id)}>Enroll</button>
-                </div>
-            ))}
+        <div className="container">
+    <h1>Courses</h1>
+
+    {courses.map(course => (
+        <div
+            key={course.id}
+            className="card"
+            onClick={() => navigate(`/courses/${course.id}`)}
+            style={{ cursor: "pointer" }}
+        >
+            <h3>{course.title}</h3>
+            <p>{course.description}</p>
         </div>
+    ))}
+</div>
     );
 }   
 export default CourseList;

@@ -50,7 +50,7 @@ function ChapterDetail() {
             {/* Optional access control display */}
             {chapter.publicOrPrivate === false && (
                 <p style={{ color: "gray" }}>
-                    🔒 Private Chapter
+                    Private Chapter
                 </p>
             )}
 
