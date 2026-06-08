@@ -6,6 +6,8 @@ function CreateCourse() {
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
     const [error, setError] = useState('');
+    const [success, setSuccess] = useState(false);
+
     const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
@@ -17,12 +19,13 @@ function CreateCourse() {
                 description
             });
 
-            // go back to dashboard after creation
-            navigate('/instructor');
+            setSuccess(true);
+            setError('');
 
         } catch (err) {
             console.log(err);
             setError('Failed to create course');
+            setSuccess(false);
         }
     };
 
@@ -32,26 +35,56 @@ function CreateCourse() {
 
             {error && <p style={{ color: "red" }}>{error}</p>}
 
-            <form onSubmit={handleSubmit}>
-                <input
-                    type="text"
-                    placeholder="Course Title"
-                    value={title}
-                    onChange={(e) => setTitle(e.target.value)}
-                    style={{ display: "block", marginBottom: "10px", padding: "8px", width: "300px" }}
-                />
+            {success ? (
+                <div>
+                    <p style={{ color: "green" }}>
+                        Course created successfully!
+                    </p>
 
-                <textarea
-                    placeholder="Course Description"
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                    style={{ display: "block", marginBottom: "10px", padding: "8px", width: "300px", height: "100px" }}
-                />
+                    <button
+                        onClick={() => navigate('/instructor')}
+                        style={{
+                            padding: "10px",
+                            marginTop: "10px",
+                            cursor: "pointer"
+                        }}
+                    >
+                        Go Home
+                    </button>
+                </div>
+            ) : (
+                <form onSubmit={handleSubmit}>
+                    <input
+                        type="text"
+                        placeholder="Course Title"
+                        value={title}
+                        onChange={(e) => setTitle(e.target.value)}
+                        style={{
+                            display: "block",
+                            marginBottom: "10px",
+                            padding: "8px",
+                            width: "300px"
+                        }}
+                    />
 
-                <button type="submit">
-                    Create Course
-                </button>
-            </form>
+                    <textarea
+                        placeholder="Course Description"
+                        value={description}
+                        onChange={(e) => setDescription(e.target.value)}
+                        style={{
+                            display: "block",
+                            marginBottom: "10px",
+                            padding: "8px",
+                            width: "300px",
+                            height: "100px"
+                        }}
+                    />
+
+                    <button type="submit">
+                        Create Course
+                    </button>
+                </form>
+            )}
         </div>
     );
 }
