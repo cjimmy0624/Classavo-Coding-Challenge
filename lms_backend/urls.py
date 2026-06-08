@@ -3,7 +3,9 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/users/', include('users.urls')), #User Section URLs
-    path('api/courses/', include('courses.urls')), #Course Section URLs
-    
+
+    path('api/users/', include('users.urls')),
+
+    # ALL course-related things (courses, chapters, enrollments)
+    path('api/', include('courses.urls')),
 ]
