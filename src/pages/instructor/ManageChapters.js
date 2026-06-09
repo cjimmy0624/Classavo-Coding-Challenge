@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import api from "../../api/axios";
 
 function ManageChapters() {
   const { id } = useParams();
+  const navigate = useNavigate();
 
   const [chapters, setChapters] = useState([]);
 
   useEffect(() => {
     fetchChapters();
-  }, []);
+  }, [id]);
 
   const fetchChapters = async () => {
     try {
@@ -32,35 +33,72 @@ function ManageChapters() {
     }
   };
 
+  const deleteChapter = async (chapterId) => {
+    try {
+      await api.delete(`/chapters/${chapterId}/delete/`);
+      fetchChapters();
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   return (
     <div style={{ padding: 20 }}>
       <h1>Manage Chapters</h1>
 
-      {chapters.map((ch) => (
-        <div
-          key={ch.id}
-          style={{
-            border: "1px solid #ccc",
-            padding: 10,
-            marginTop: 10,
-          }}
-        >
-          <h3>{ch.title}</h3>
+      {/* GO BACK */}
+      <button onClick={() => navigate(`/course/${id}`)}>
+        ⬅ Go Back
+      </button>
 
-          <p>
-            Visibility:{" "}
-            <b>{ch.publicOrPrivate ? "Public" : "Private"}</b>
-          </p>
-
-          <button
-            onClick={() =>
-              toggleVisibility(ch.id, ch.publicOrPrivate)
-            }
+      <div style={{ marginTop: 20 }}>
+        {chapters.map((ch) => (
+          <div
+            key={ch.id}
+            style={{
+              border: "1px solid #ccc",
+              padding: 10,
+              marginTop: 10,
+            }}
           >
-            Toggle Visibility
-          </button>
-        </div>
-      ))}
+            <h3>{ch.title}</h3>
+
+            <p>
+              Visibility: <b>{ch.publicOrPrivate ? "Public" : "Private"}</b>
+            </p>
+
+            {/* ACTION BUTTONS */}
+            <div style={{ display: "flex", gap: 10 }}>
+              
+              {/* TOGGLE */}
+              <button
+                onClick={() =>
+                  toggleVisibility(ch.id, ch.publicOrPrivate)
+                }
+              >
+                Toggle Visibility
+              </button>
+
+              {/* EDIT */}
+              <button
+                onClick={() =>
+                  navigate(`/course/${id}/edit-chapter/${ch.id}`)
+                }
+              >
+                ✏️ Edit
+              </button>
+
+              {/* DELETE */}
+              <button
+                onClick={() => deleteChapter(ch.id)}
+                style={{ color: "red" }}
+              >
+                🗑 Delete
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
