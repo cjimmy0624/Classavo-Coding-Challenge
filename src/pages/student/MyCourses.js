@@ -12,7 +12,7 @@ function MyCourses() {
 
   const fetchMyCourses = async () => {
     try {
-      const res = await api.get("/courses/student/courses/");
+      const res = await api.get("/student/courses/");
       setCourses(res.data);
     } catch (err) {
       console.log(err);
