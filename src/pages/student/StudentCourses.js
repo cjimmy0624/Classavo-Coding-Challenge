@@ -7,12 +7,12 @@ function StudentCourses() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetchCourses();
+    fetchMyCourses();
   }, []);
 
-  const fetchCourses = async () => {
+  const fetchMyCourses = async () => {
     try {
-      const res = await api.get("/courses/");
+      const res = await api.get("/student/courses/");
       setCourses(res.data);
     } catch (err) {
       console.log(err);
@@ -24,58 +24,38 @@ function StudentCourses() {
     navigate("/login");
   };
 
-  const joinCourse = async (courseId) => {
-    try {
-      await api.post(`/courses/${courseId}/enroll/`);
-      alert("Joined course!");
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
   return (
     <div style={{ padding: 20 }}>
-      <h1>Available Courses</h1>
+      <h1>My Courses</h1>
 
-      {/* TOP NAV BUTTONS */}
-      <div style={{ marginBottom: 20, display: "flex", gap: 10 }}>
-        <button onClick={() => navigate("/student/my-courses")}>
-          My Courses
-        </button>
+      <button onClick={handleLogout} style={{ background: "red", color: "white" }}>
+        Logout
+      </button>
 
-        <button
-          onClick={handleLogout}
-          style={{ background: "red", color: "white" }}
-        >
-          Logout
-        </button>
+      <div style={{ marginTop: 20 }}>
+        {courses.length === 0 ? (
+          <p>You are not enrolled in any courses yet.</p>
+        ) : (
+          courses.map((course) => (
+            <div
+              key={course.id}
+              style={{
+                border: "1px solid #ccc",
+                marginTop: 10,
+                padding: 10,
+                borderRadius: 8,
+              }}
+            >
+              <h3>{course.title}</h3>
+              <p>{course.description}</p>
+
+              <button onClick={() => navigate(`/student/course/${course.id}`)}>
+                Open
+              </button>
+            </div>
+          ))
+        )}
       </div>
-
-      {/* COURSE LIST */}
-      {courses.map((course) => (
-        <div
-          key={course.id}
-          style={{
-            border: "1px solid #ccc",
-            marginTop: 10,
-            padding: 10,
-            borderRadius: 8
-          }}
-        >
-          <h3>{course.title}</h3>
-          <p>{course.description}</p>
-
-          <div style={{ display: "flex", gap: 10 }}>
-            <button onClick={() => joinCourse(course.id)}>
-              Join
-            </button>
-
-            <button onClick={() => navigate(`/student/course/${course.id}`)}>
-              Open
-            </button>
-          </div>
-        </div>
-      ))}
     </div>
   );
 }
