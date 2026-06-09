@@ -12,6 +12,7 @@ import ManageChapters from "./pages/instructor/ManageChapters";
 
 import StudentCourses from "./pages/student/StudentCourses";
 import StudentCourseDetail from "./pages/student/StudentCourseDetail";
+import MyCourses from "./pages/student/MyCourses";
 
 function App() {
   return (
@@ -34,6 +35,7 @@ function App() {
       {/* student */}
       <Route path="/student/courses" element={<StudentCourses />} />
       <Route path="/student/course/:id" element={<StudentCourseDetail />} />
+      <Route path="/student/my-courses" element={<MyCourses />} />
     </Routes>
   );
 }
