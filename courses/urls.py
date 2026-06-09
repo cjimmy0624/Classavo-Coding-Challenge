@@ -8,7 +8,6 @@ from .views import (
     ChapterUpdateView,
     ChapterDeleteView,
     EnrollmentCreateView,
-    StudentEnrolledCoursesView,
 )
 
 urlpatterns = [
@@ -16,7 +15,7 @@ urlpatterns = [
     path('courses/', CourseListCreateView.as_view()),
     path('courses/<int:pk>/', CourseDetailView.as_view()),
 
-    # CHAPTERS (course-based)
+    # CHAPTERS
     path('courses/<int:course_id>/chapters/', ChapterListView.as_view()),
     path('courses/<int:course_id>/chapters/create/', ChapterCreateView.as_view()),
 
@@ -27,5 +26,4 @@ urlpatterns = [
 
     # ENROLLMENT
     path('courses/<int:course_id>/enroll/', EnrollmentCreateView.as_view()),
-    path("student/courses/", StudentEnrolledCoursesView.as_view()),
 ]
