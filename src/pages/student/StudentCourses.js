@@ -71,6 +71,17 @@ function StudentCourses() {
           </div>
         </div>
       ))}
+
+      {/*MY COURSES*/}
+      <div style={{ marginBottom: 20, display: "flex", gap: 10 }}>
+        <button onClick={() => navigate("/student/my-courses")}>
+          My Courses
+        </button>
+
+        <button onClick={handleLogout} style={{ background: "red", color: "white" }}>
+          Logout
+        </button>
+      </div>
     </div>
   );
 }
