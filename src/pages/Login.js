@@ -35,7 +35,7 @@ function Login() {
             if (role === 'instructor') {
                 navigate('/instructor');
             } else {
-                navigate('/student');
+                navigate('/student/courses');
             }
 
         } catch (err) {
