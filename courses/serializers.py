@@ -11,7 +11,7 @@ class ChapterSerializer(serializers.ModelSerializer):
     class Meta:
         model = Chapter
         fields = ['id','title','content','publicOrPrivate','order','course']
-        read_only_fields = []  # course will be assigned in request or view
+        read_only_fields = ['course']  # course will be assigned in request or view
 
 class EnrollmentSerializer(serializers.ModelSerializer):
     class Meta:
