@@ -46,7 +46,7 @@ function ManageChapters() {
     <div style={{ padding: 20 }}>
       <h1>Manage Chapters</h1>
 
-      {/* GO BACK */}
+      {/* GO BACK BUTTON (FIXED) */}
       <button onClick={() => navigate(`/course/${id}`)}>
         ⬅ Go Back
       </button>
@@ -69,6 +69,7 @@ function ManageChapters() {
 
             <div style={{ display: "flex", gap: 10 }}>
               
+              {/* TOGGLE */}
               <button
                 onClick={() =>
                   toggleVisibility(ch.id, ch.publicOrPrivate)
@@ -77,7 +78,7 @@ function ManageChapters() {
                 Toggle Visibility
               </button>
 
-              {/* EDIT → reuse create page */}
+              {/* EDIT */}
               <button
                 onClick={() =>
                   navigate(`/course/${id}/create-chapter`, {
@@ -88,6 +89,7 @@ function ManageChapters() {
                 ✏️ Edit
               </button>
 
+              {/* DELETE */}
               <button
                 onClick={() => deleteChapter(ch.id)}
                 style={{ color: "red" }}
