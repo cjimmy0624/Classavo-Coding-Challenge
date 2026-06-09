@@ -21,24 +21,49 @@ function ChapterView() {
     }
   };
 
+  const renderContent = (content) => {
+    if (!content) return "";
+
+    try {
+      const parsed =
+        typeof content === "string" ? JSON.parse(content) : content;
+
+      if (!Array.isArray(parsed)) return content;
+
+      return parsed
+        .map((block) =>
+          block.children?.map((child) => child.text).join("") || ""
+        )
+        .join("\n\n");
+    } catch (e) {
+      return content;
+    }
+  };
+
   if (!chapter) return <h3>Loading...</h3>;
 
   return (
     <div style={{ padding: 20 }}>
 
       {/* BACK BUTTON */}
-      <button onClick={() => navigate(-1)}>← Go Back</button>
+      <button onClick={() => navigate(-1)}>
+        ← Go Back
+      </button>
 
-      {/* CHAPTER TITLE */}
+      {/* TITLE */}
       <h1 style={{ marginTop: 20 }}>{chapter.title}</h1>
 
-      {/* CHAPTER CONTENT */}
-      {/* dangerouslySetInnerHTML handles Plate.js rich text HTML */}
-      {/* whiteSpace fallback handles plain text if content is not HTML */}
+      {/* CONTENT */}
       <div
-        style={{ marginTop: 20, whiteSpace: "pre-wrap", lineHeight: "1.6" }}
-        dangerouslySetInnerHTML={{ __html: chapter.content }}
-      />
+        style={{
+          marginTop: 20,
+          whiteSpace: "pre-wrap",
+          lineHeight: "1.6",
+          fontSize: "16px",
+        }}
+      >
+        {renderContent(chapter.content)}
+      </div>
 
     </div>
   );

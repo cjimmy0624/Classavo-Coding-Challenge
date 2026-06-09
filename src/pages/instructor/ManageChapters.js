@@ -89,8 +89,8 @@ function ManageChapters() {
 
                 {/* edit */}
                 <button onClick={() => editChapter(ch)}>
+                  Edit Chapter
                 </button>
-
                 {/* delete */}
                 <button
                   onClick={() => deleteChapter(ch.id)}

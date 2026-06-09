@@ -2,20 +2,20 @@ import React, { useMemo, useState, useEffect } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import api from "../../api/axios";
 
-import { Plate, createPlateEditor } from "@udecode/plate/react";
+import { Plate, createPlateEditor, PlateContent } from "@udecode/plate/react";
 
 function CreateChapter() {
   const { id } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
 
-  const editingChapter = location.state?.chapter; // 👈 KEY FIX
+  const editingChapter = location.state?.chapter;
   const isEditMode = !!editingChapter;
 
   const [title, setTitle] = useState("");
   const [isPublic, setIsPublic] = useState(false);
 
-  // Initialize editor
+  // ✅ Correct editor setup
   const editor = useMemo(
     () =>
       createPlateEditor({
@@ -29,22 +29,27 @@ function CreateChapter() {
     []
   );
 
-  // Load data when editing
+  // ✅ Load chapter when editing
   useEffect(() => {
     if (editingChapter) {
       setTitle(editingChapter.title);
       setIsPublic(editingChapter.publicOrPrivate);
 
-      // If content exists, load it into editor
       try {
-        const parsed = JSON.parse(editingChapter.content);
+        const parsed =
+          typeof editingChapter.content === "string"
+            ? JSON.parse(editingChapter.content)
+            : editingChapter.content;
+
+        // IMPORTANT: assign safely
         editor.children = parsed;
       } catch (err) {
-        console.log("Failed to load editor content:", err);
+        console.log("Failed to load content:", err);
       }
     }
   }, [editingChapter, editor]);
 
+  // ✅ Save chapter
   const handleSubmit = async () => {
     try {
       const payload = {
@@ -54,10 +59,8 @@ function CreateChapter() {
       };
 
       if (isEditMode) {
-        // ✅ UPDATE
         await api.patch(`/chapters/${editingChapter.id}/`, payload);
       } else {
-        // ✅ CREATE
         await api.post(`/courses/${id}/chapters/create/`, payload);
       }
 
@@ -71,6 +74,7 @@ function CreateChapter() {
     <div style={{ padding: 20 }}>
       <h1>{isEditMode ? "Edit Chapter" : "Create Chapter"}</h1>
 
+      {/* TITLE */}
       <input
         value={title}
         onChange={(e) => setTitle(e.target.value)}
@@ -80,6 +84,7 @@ function CreateChapter() {
 
       <br /><br />
 
+      {/* PUBLIC CHECKBOX */}
       <label>
         <input
           type="checkbox"
@@ -91,20 +96,21 @@ function CreateChapter() {
 
       <br /><br />
 
+      {/*PROPER PLATE EDITOR (FIXED) */}
       <Plate editor={editor}>
-        <div
-          contentEditable
-          suppressContentEditableWarning
+        <PlateContent
           style={{
             minHeight: 200,
             border: "1px solid #ccc",
             padding: 10,
+            borderRadius: 6,
           }}
         />
       </Plate>
 
       <br />
 
+      {/* SAVE BUTTON */}
       <button onClick={handleSubmit}>
         {isEditMode ? "Update Chapter" : "Save Chapter"}
       </button>
