@@ -110,3 +110,11 @@ class EnrollmentCreateView(generics.CreateAPIView):
             student=self.request.user,
             course=course
         )
+class StudentEnrolledCoursesView(generics.ListAPIView):
+    serializer_class = CourseSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return Course.objects.filter(
+            enrollments__student=self.request.user
+        ).distinct()
