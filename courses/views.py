@@ -71,6 +71,30 @@ class ChapterDetailView(generics.RetrieveUpdateAPIView):
     serializer_class = ChapterSerializer
     permission_classes = [permissions.IsAuthenticated]
 
+class ChapterUpdateView(generics.RetrieveUpdateAPIView):
+    queryset = Chapter.objects.all()
+    serializer_class = ChapterSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def perform_update(self, serializer):
+        chapter = self.get_object()
+
+        if chapter.course.instructor != self.request.user:
+            raise PermissionDenied("Not allowed")
+
+        serializer.save()
+
+
+class ChapterDeleteView(generics.DestroyAPIView):
+    queryset = Chapter.objects.all()
+    serializer_class = ChapterSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def perform_destroy(self, instance):
+        if instance.course.instructor != self.request.user:
+            raise PermissionDenied("Not allowed")
+        instance.delete()
+
 
 class EnrollmentCreateView(generics.CreateAPIView):
     serializer_class = EnrollmentSerializer
