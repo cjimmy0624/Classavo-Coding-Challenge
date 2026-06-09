@@ -15,7 +15,7 @@ class Course(models.Model):
 class Chapter(models.Model):
     title = models.CharField(max_length=200) #Title of the chapter
     
-    content = models.JSONField(default=dict)
+    content = models.JSONField(default=list, blank=True)
 
     publicOrPrivate = models.BooleanField(default=False) #Indicates whether the chapter is public or private
 
