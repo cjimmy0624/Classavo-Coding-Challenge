@@ -4,31 +4,46 @@ import api from "../../api/axios";
 
 function MyCourses() {
   const [courses, setCourses] = useState([]);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+
+  const fetchMyCourses = async () => {
+    try {
+      setLoading(true);
+      const res = await api.get("/student/courses/");
+      setCourses(res.data);
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     fetchMyCourses();
   }, []);
 
-  const fetchMyCourses = async () => {
-    try {
-      const res = await api.get("/student/courses/");
-      setCourses(res.data);
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
   return (
     <div style={{ padding: 20 }}>
       <h1>My Courses</h1>
 
-      <button onClick={() => navigate("/student/courses")}>
-        ← Browse All Courses
-      </button>
+      <div style={{ display: "flex", gap: 10 }}>
+        <button onClick={() => navigate("/student/courses")}>
+          ← Browse All Courses
+        </button>
 
-      {courses.length === 0 ? (
-        <p style={{ marginTop: 20 }}>You are not enrolled in any courses yet.</p>
+        <button onClick={fetchMyCourses}>
+          Refresh
+        </button>
+      </div>
+
+      {/* LOADING */}
+      {loading ? (
+        <p style={{ marginTop: 20 }}>Loading courses...</p>
+      ) : courses.length === 0 ? (
+        <p style={{ marginTop: 20 }}>
+          You are not enrolled in any courses yet.
+        </p>
       ) : (
         courses.map((course) => (
           <div
@@ -37,13 +52,15 @@ function MyCourses() {
               border: "1px solid #ccc",
               marginTop: 10,
               padding: 10,
-              borderRadius: 8
+              borderRadius: 8,
             }}
           >
             <h3>{course.title}</h3>
             <p>{course.description}</p>
 
-            <button onClick={() => navigate(`/student/course/${course.id}`)}>
+            <button
+              onClick={() => navigate(`/student/course/${course.id}`)}
+            >
               Open Course
             </button>
           </div>
