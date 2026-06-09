@@ -105,3 +105,10 @@ class EnrollmentCreateView(generics.CreateAPIView):
     def perform_create(self, serializer):
         course_id = self.kwargs['course_id']
         serializer.save(student=self.request.user, course_id=course_id)
+
+class StudentEnrolledCoursesView(generics.ListAPIView):
+    serializer_class = CourseSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return Course.objects.filter(enrollment__student=self.request.user)
