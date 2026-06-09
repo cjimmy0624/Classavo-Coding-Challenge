@@ -20,9 +20,7 @@ function StudentCourses() {
   };
 
   const handleLogout = () => {
-    // optional: clear auth token if you use one
     localStorage.removeItem("token");
-
     navigate("/login");
   };
 
@@ -39,9 +37,16 @@ function StudentCourses() {
     <div style={{ padding: 20 }}>
       <h1>Available Courses</h1>
 
-      {/* TOP BUTTONS */}
+      {/* TOP NAV BUTTONS */}
       <div style={{ marginBottom: 20, display: "flex", gap: 10 }}>
-        <button onClick={handleLogout} style={{ background: "red", color: "white" }}>
+        <button onClick={() => navigate("/student/my-courses")}>
+          My Courses
+        </button>
+
+        <button
+          onClick={handleLogout}
+          style={{ background: "red", color: "white" }}
+        >
           Logout
         </button>
       </div>
@@ -71,17 +76,6 @@ function StudentCourses() {
           </div>
         </div>
       ))}
-
-      {/*MY COURSES*/}
-      <div style={{ marginBottom: 20, display: "flex", gap: 10 }}>
-        <button onClick={() => navigate("/student/my-courses")}>
-          My Courses
-        </button>
-
-        <button onClick={handleLogout} style={{ background: "red", color: "white" }}>
-          Logout
-        </button>
-      </div>
     </div>
   );
 }
