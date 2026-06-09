@@ -21,36 +21,54 @@ function StudentCourseDetail() {
     }
   };
 
-  if (!course) return <div>Loading...</div>;
+  if (!course) {
+    return <div style={{ padding: 20 }}>Loading...</div>;
+  }
 
   return (
     <div style={{ padding: 20 }}>
       
-      {/* GO BACK BUTTON */}
-      <button onClick={() => navigate("/student/courses")}>
-        ⬅ Go Back
-      </button>
+      {/* BACK BUTTONS */}
+      <div style={{ marginBottom: 20, display: "flex", gap: 10 }}>
+        <button onClick={() => navigate("/student/my-courses")}>
+          ← My Courses
+        </button>
 
+        <button onClick={() => navigate("/student/courses")}>
+          ← All Courses
+        </button>
+
+        <button onClick={() => navigate(-1)}>
+          ⬅ Go Back
+        </button>
+      </div>
+
+      {/* COURSE INFO */}
       <h1>{course.course.title}</h1>
       <p>{course.course.description}</p>
 
-      <h3>Public Chapters</h3>
+      {/* CHAPTERS */}
+      <h3 style={{ marginTop: 20 }}>Public Chapters</h3>
 
-      {course.chapters
-        .filter((ch) => ch.publicOrPrivate)
-        .map((ch) => (
-          <div
-            key={ch.id}
-            style={{
-              border: "1px solid #ccc",
-              padding: 10,
-              marginTop: 10,
-              borderRadius: 8
-            }}
-          >
-            <h4>{ch.title}</h4>
-          </div>
-        ))}
+      {course.chapters?.length === 0 ? (
+        <p>No public chapters available.</p>
+      ) : (
+        course.chapters
+          .filter((ch) => ch.publicOrPrivate)
+          .map((ch) => (
+            <div
+              key={ch.id}
+              style={{
+                border: "1px solid #ccc",
+                padding: 10,
+                marginTop: 10,
+                borderRadius: 8,
+              }}
+            >
+              <h4>{ch.title}</h4>
+            </div>
+          ))
+      )}
     </div>
   );
 }
