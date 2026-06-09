@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import api from "../api/axios";
+import api from "../../api/axios";
 
 function ManageChapters() {
   const { id } = useParams();
@@ -8,7 +8,6 @@ function ManageChapters() {
 
   const [chapters, setChapters] = useState([]);
 
-  // ✅ stable fetch function
   const fetchChapters = useCallback(async () => {
     try {
       const res = await api.get(`/courses/${id}/`);
@@ -22,7 +21,6 @@ function ManageChapters() {
     fetchChapters();
   }, [fetchChapters]);
 
-  // ✅ toggle visibility
   const toggleVisibility = async (chapterId, currentValue) => {
     try {
       await api.patch(`/chapters/${chapterId}/`, {
@@ -35,7 +33,6 @@ function ManageChapters() {
     }
   };
 
-  // ✅ delete chapter
   const deleteChapter = async (chapterId) => {
     try {
       await api.delete(`/chapters/${chapterId}/delete/`);
@@ -45,7 +42,6 @@ function ManageChapters() {
     }
   };
 
-  // ✅ edit chapter (reuse CreateChapter page)
   const editChapter = (chapter) => {
     navigate(`/course/${id}/create-chapter`, {
       state: { chapter },
@@ -93,7 +89,6 @@ function ManageChapters() {
 
                 {/* edit */}
                 <button onClick={() => editChapter(ch)}>
-                  ✏️ Edit
                 </button>
 
                 {/* delete */}

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import api from "../api/axios";
+import api from "../../api/axios";
 
 function StudentCourseDetail() {
   const { id } = useParams();
@@ -57,16 +57,22 @@ function StudentCourseDetail() {
           .filter((ch) => ch.publicOrPrivate)
           .map((ch) => (
             <div
-              key={ch.id}
-              style={{
-                border: "1px solid #ccc",
-                padding: 10,
-                marginTop: 10,
-                borderRadius: 8,
-              }}
+                key={ch.id}
+                style={{
+                  border: "1px solid #ccc",
+                  padding: 10,
+                  marginTop: 10,
+                  borderRadius: 8,
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
             >
-              <h4>{ch.title}</h4>
-            </div>
+  <h4 style={{ margin: 0 }}>{ch.title}</h4>
+  <button onClick={() => navigate(`/chapter/${ch.id}`)}>
+  Read →
+  </button>
+</div>
           ))
       )}
     </div>

@@ -3,43 +3,45 @@ import { useParams, useNavigate } from "react-router-dom";
 import api from "../api/axios";
 
 function ChapterView() {
-    const { id } = useParams();
-    const navigate = useNavigate();
+  const { id } = useParams();
+  const navigate = useNavigate();
 
-    const [chapter, setChapter] = useState(null);
+  const [chapter, setChapter] = useState(null);
 
-    useEffect(() => {
-        fetchChapter();
-    }, [id]);
+  useEffect(() => {
+    fetchChapter();
+  }, [id]);
 
-    const fetchChapter = async () => {
+  const fetchChapter = async () => {
     try {
-        const res = await api.get(`/chapters/${id}/`);
-
-        // handles both API formats safely
-        setChapter(res.data.chapter || res.data);
-
+      const res = await api.get(`/chapters/${id}/`);
+      setChapter(res.data.chapter || res.data);
     } catch (err) {
-        console.log(err);
+      console.log(err);
     }
-};
+  };
 
-    if (!chapter) return <h3>Loading...</h3>;
+  if (!chapter) return <h3>Loading...</h3>;
 
-    return (
-        <div style={{ padding: 20 }}>
-            
-            <button onClick={() => navigate(-1)}>
-                ← Go Back
-            </button>
+  return (
+    <div style={{ padding: 20 }}>
 
-            <h1>{chapter.title}</h1>
+      {/* BACK BUTTON */}
+      <button onClick={() => navigate(-1)}>← Go Back</button>
 
-            <p style={{ marginTop: 20, whiteSpace: "pre-wrap" }}>
-                {chapter.content}
-            </p>
-        </div>
-    );
+      {/* CHAPTER TITLE */}
+      <h1 style={{ marginTop: 20 }}>{chapter.title}</h1>
+
+      {/* CHAPTER CONTENT */}
+      {/* dangerouslySetInnerHTML handles Plate.js rich text HTML */}
+      {/* whiteSpace fallback handles plain text if content is not HTML */}
+      <div
+        style={{ marginTop: 20, whiteSpace: "pre-wrap", lineHeight: "1.6" }}
+        dangerouslySetInnerHTML={{ __html: chapter.content }}
+      />
+
+    </div>
+  );
 }
 
 export default ChapterView;
