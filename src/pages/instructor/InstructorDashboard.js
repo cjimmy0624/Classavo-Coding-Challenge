@@ -19,14 +19,32 @@ function InstructorDashboard() {
         }
     };
 
+    const handleLogout = () => {
+        // optional: clear token if you're using one
+        localStorage.removeItem("token");
+
+        // redirect to login
+        navigate("/login");
+    };
+
     return (
         <div style={{ padding: "20px" }}>
             <h1>Instructor Dashboard</h1>
 
-            {/* CREATE COURSE */}
-            <button onClick={() => navigate('/create-course')}>
-                + Create Course
-            </button>
+            {/* TOP BUTTONS */}
+            <div style={{ display: "flex", gap: "10px", marginBottom: "20px" }}>
+                
+                <button onClick={() => navigate('/create-course')}>
+                    + Create Course
+                </button>
+
+                <button
+                    onClick={handleLogout}
+                    style={{ background: "red", color: "white" }}
+                >
+                    Logout
+                </button>
+            </div>
 
             {/* COURSE LIST */}
             <div style={{ marginTop: "20px" }}>
@@ -46,10 +64,7 @@ function InstructorDashboard() {
                         {/* ACTION BUTTONS */}
                         <div style={{ marginTop: "10px", display: "flex", gap: "10px" }}>
                             
-                            {/* Manage Course */}
-                            <button
-                                onClick={() => navigate(`/course/${course.id}`)}
-                            >
+                            <button onClick={() => navigate(`/course/${course.id}`)}>
                                 Manage Course
                             </button>
 
