@@ -19,11 +19,6 @@ function StudentCourses() {
     }
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    navigate("/login");
-  };
-
   const joinCourse = async (courseId) => {
     try {
       await api.post(`/courses/${courseId}/enroll/`);
@@ -33,11 +28,16 @@ function StudentCourses() {
     }
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    navigate("/login");
+  };
+
   return (
     <div style={{ padding: 20 }}>
       <h1>Available Courses</h1>
 
-      {/* TOP NAV BUTTONS */}
+      {/* TOP BUTTONS */}
       <div style={{ marginBottom: 20, display: "flex", gap: 10 }}>
         <button onClick={() => navigate("/student/my-courses")}>
           My Courses
@@ -59,7 +59,7 @@ function StudentCourses() {
             border: "1px solid #ccc",
             marginTop: 10,
             padding: 10,
-            borderRadius: 8
+            borderRadius: 8,
           }}
         >
           <h3>{course.title}</h3>
@@ -70,7 +70,9 @@ function StudentCourses() {
               Join
             </button>
 
-            <button onClick={() => navigate(`/student/course/${course.id}`)}>
+            <button
+              onClick={() => navigate(`/student/course/${course.id}`)}
+            >
               Open
             </button>
           </div>
