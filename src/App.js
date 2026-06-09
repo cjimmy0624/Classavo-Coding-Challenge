@@ -27,7 +27,6 @@ function App() {
       <Route path="/create-course" element={<CreateCourse />} />
       <Route path="/course/:id" element={<CourseDetail />} />
 
-      {/* FIXED - only ONE create-chapter route */}
       <Route path="/course/:id/create-chapter" element={<CreateChapter />} />
 
       <Route path="/course/:id/manage-chapters" element={<ManageChapters />} />

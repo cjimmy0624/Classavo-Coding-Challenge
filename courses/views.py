@@ -23,6 +23,7 @@ class CourseListCreateView(generics.ListCreateAPIView):
     def perform_create(self, serializer):
         serializer.save(instructor=self.request.user)
 
+
 class CourseDetailView(generics.RetrieveAPIView):
     queryset = Course.objects.all()
     serializer_class = CourseSerializer
@@ -30,7 +31,8 @@ class CourseDetailView(generics.RetrieveAPIView):
 
     def retrieve(self, request, *args, **kwargs):
         course = self.get_object()
-        chapters = course.chapters.all().order_by('order')
+
+        chapters = course.chapter_set.all().order_by('order')
 
         return Response({
             "course": CourseSerializer(course).data,
@@ -47,7 +49,7 @@ class ChapterListView(generics.ListAPIView):
 
         return Chapter.objects.filter(
             course_id=course_id,
-            publicOrPrivate=True   # FIXED FIELD
+            publicOrPrivate=True
         ).order_by('order')
 
 
@@ -59,7 +61,6 @@ class ChapterCreateView(generics.CreateAPIView):
         course_id = self.kwargs['course_id']
         course = Course.objects.get(id=course_id)
 
-        # only instructor of course can create chapters
         if course.instructor != self.request.user:
             raise PermissionDenied("Not allowed")
 
@@ -70,6 +71,7 @@ class ChapterDetailView(generics.RetrieveUpdateAPIView):
     queryset = Chapter.objects.all()
     serializer_class = ChapterSerializer
     permission_classes = [permissions.IsAuthenticated]
+
 
 class ChapterUpdateView(generics.RetrieveUpdateAPIView):
     queryset = Chapter.objects.all()

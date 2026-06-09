@@ -67,10 +67,8 @@ function ManageChapters() {
               Visibility: <b>{ch.publicOrPrivate ? "Public" : "Private"}</b>
             </p>
 
-            {/* ACTION BUTTONS */}
             <div style={{ display: "flex", gap: 10 }}>
               
-              {/* TOGGLE */}
               <button
                 onClick={() =>
                   toggleVisibility(ch.id, ch.publicOrPrivate)
@@ -79,22 +77,24 @@ function ManageChapters() {
                 Toggle Visibility
               </button>
 
-              {/* EDIT */}
+              {/* EDIT → reuse create page */}
               <button
                 onClick={() =>
-                  navigate(`/course/${id}/edit-chapter/${ch.id}`)
+                  navigate(`/course/${id}/create-chapter`, {
+                    state: { chapter: ch }
+                  })
                 }
               >
                 ✏️ Edit
               </button>
 
-              {/* DELETE */}
               <button
                 onClick={() => deleteChapter(ch.id)}
                 style={{ color: "red" }}
               >
                 🗑 Delete
               </button>
+
             </div>
           </div>
         ))}

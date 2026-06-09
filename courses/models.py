@@ -13,13 +13,11 @@ class Course(models.Model):
 
 
 class Chapter(models.Model):
-    title = models.CharField(max_length=200) #Title of the chapter
-    
-    content = models.JSONField(default=list, blank=True)
-
-    publicOrPrivate = models.BooleanField(default=False) #Indicates whether the chapter is public or private
-
-    course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='chapters') #Connects the chapter to a course using a foreign key relationship.
+    title = models.CharField(max_length=255)
+    content = models.JSONField(default=dict, blank=True)
+    publicOrPrivate = models.BooleanField(default=False)
+    order = models.IntegerField(default=0)
+    course = models.ForeignKey("Course", on_delete=models.CASCADE)
     
     order = models.IntegerField(default=0) #Indicates the order of the chapter within the course.
 
