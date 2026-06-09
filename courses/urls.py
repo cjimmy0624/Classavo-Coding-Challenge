@@ -4,8 +4,8 @@ from .views import (
     CourseDetailView,
     ChapterListView,
     ChapterCreateView,
-    ChapterDetailView,
-    EnrollmentCreateView
+    ChapterUpdateView,
+    ChapterDeleteView,
 )
 
 urlpatterns = [
