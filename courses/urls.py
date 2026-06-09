@@ -20,4 +20,7 @@ urlpatterns = [
     path('courses/<int:course_id>/enroll/', EnrollmentCreateView.as_view()),
 
     path('chapters/<int:pk>/', ChapterDetailView.as_view()),
+
+    path('chapters/<int:pk>/', ChapterUpdateView.as_view()),
+path('chapters/<int:pk>/delete/', ChapterDeleteView.as_view()),
 ]
