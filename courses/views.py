@@ -1,11 +1,15 @@
-from rest_framework import generics, permissions
+from rest_framework import generics, permissions, status
 from rest_framework.response import Response
 from rest_framework.exceptions import PermissionDenied
+from django.shortcuts import get_object_or_404
 
 from .models import Course, Chapter, Enrollment
 from .serializers import CourseSerializer, ChapterSerializer, EnrollmentSerializer
 
 
+# =========================
+# COURSES
+# =========================
 class CourseListCreateView(generics.ListCreateAPIView):
     serializer_class = CourseSerializer
     permission_classes = [permissions.IsAuthenticated]
@@ -13,11 +17,9 @@ class CourseListCreateView(generics.ListCreateAPIView):
     def get_queryset(self):
         user = self.request.user
 
-        # instructors only see their own courses
         if hasattr(user, "role") and user.role == "instructor":
             return Course.objects.filter(instructor=user)
 
-        # students see all courses
         return Course.objects.all()
 
     def perform_create(self, serializer):
@@ -40,6 +42,9 @@ class CourseDetailView(generics.RetrieveAPIView):
         })
 
 
+# =========================
+# CHAPTERS
+# =========================
 class ChapterListView(generics.ListAPIView):
     serializer_class = ChapterSerializer
     permission_classes = [permissions.IsAuthenticated]
@@ -58,8 +63,7 @@ class ChapterCreateView(generics.CreateAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def perform_create(self, serializer):
-        course_id = self.kwargs['course_id']
-        course = Course.objects.get(id=course_id)
+        course = get_object_or_404(Course, id=self.kwargs['course_id'])
 
         if course.instructor != self.request.user:
             raise PermissionDenied("Not allowed")
@@ -97,19 +101,37 @@ class ChapterDeleteView(generics.DestroyAPIView):
             raise PermissionDenied("Not allowed")
         instance.delete()
 
+
+# =========================
+# ENROLLMENT
+# =========================
 class EnrollmentCreateView(generics.CreateAPIView):
     serializer_class = EnrollmentSerializer
     permission_classes = [permissions.IsAuthenticated]
 
-    def perform_create(self, serializer):
-        course_id = self.kwargs['course_id']
+    def create(self, request, *args, **kwargs):
+        course = get_object_or_404(Course, id=self.kwargs['course_id'])
 
-        course = Course.objects.get(id=course_id)
-
-        serializer.save(
-            student=self.request.user,
+        enrollment, created = Enrollment.objects.get_or_create(
+            student=request.user,
             course=course
         )
+
+        if not created:
+            return Response(
+                {"message": "Already enrolled"},
+                status=status.HTTP_200_OK
+            )
+
+        return Response(
+            EnrollmentSerializer(enrollment).data,
+            status=status.HTTP_201_CREATED
+        )
+
+
+# =========================
+# STUDENT MY COURSES
+# =========================
 class StudentEnrolledCoursesView(generics.ListAPIView):
     serializer_class = CourseSerializer
     permission_classes = [permissions.IsAuthenticated]
