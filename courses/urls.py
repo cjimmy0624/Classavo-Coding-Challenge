@@ -24,6 +24,7 @@ urlpatterns = [
     path('chapters/<int:pk>/', ChapterDetailView.as_view()),
     path('chapters/<int:pk>/update/', ChapterUpdateView.as_view()),
     path('chapters/<int:pk>/delete/', ChapterDeleteView.as_view()),
+    
 
     # ENROLLMENT
     path('courses/<int:course_id>/enroll/', EnrollmentCreateView.as_view()),
