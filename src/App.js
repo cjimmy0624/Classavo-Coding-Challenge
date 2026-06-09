@@ -9,6 +9,7 @@ import CourseDetail from "./pages/instructor/CourseDetail";
 
 import CreateChapter from "./pages/instructor/CreateChapter";
 import ManageChapters from "./pages/instructor/ManageChapters";
+import ChapterView from "./pages/ChapterView";
 
 import StudentCourses from "./pages/student/StudentCourses";
 import StudentCourseDetail from "./pages/student/StudentCourseDetail";
@@ -31,6 +32,7 @@ function App() {
 
       <Route path="/course/:id/create-chapter" element={<CreateChapter />} />
       <Route path="/course/:id/manage-chapters" element={<ManageChapters />} />
+      <Route path="/chapter/:id" element={<ChapterView />} />
 
       {/* student */}
       <Route path="/student/courses" element={<StudentCourses />} />

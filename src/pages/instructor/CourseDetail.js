@@ -1,66 +1,111 @@
 import React, { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
 import api from "../../api/axios";
+import { useParams, useNavigate } from "react-router-dom";
 
 function CourseDetail() {
-  const { id } = useParams();
-  const navigate = useNavigate();
+    const { id } = useParams();
+    const navigate = useNavigate();
 
-  const [course, setCourse] = useState(null);
-  const [chapters, setChapters] = useState([]);
+    const [course, setCourse] = useState(null);
+    const [chapters, setChapters] = useState([]);
+    const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    fetchCourse();
-  }, []);
+    useEffect(() => {
+        fetchCourse();
+    }, [id]);
 
-  const fetchCourse = async () => {
-    try {
-      const res = await api.get(`/courses/${id}/`);
-      setCourse(res.data.course);
-      setChapters(res.data.chapters);
-    } catch (err) {
-      console.log(err);
+    const fetchCourse = async () => {
+        try {
+            const res = await api.get(`/courses/${id}/`);
+            setCourse(res.data.course);
+            setChapters(res.data.chapters);
+        } catch (err) {
+            console.log(err);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    if (loading) {
+        return <h3 style={{ padding: "20px" }}>Loading...</h3>;
     }
-  };
 
-  return (
-    <div style={{ padding: 20 }}>
-      {course && (
-        <>
-          <h1>{course.title}</h1>
-          <p>{course.description}</p>
+    return (
+        <div style={{ padding: "20px" }}>
 
-          <button onClick={() => navigate(`/course/${id}/create-chapter`)}>
-            + Create Chapter
-          </button>
-
-          <button
-            style={{ marginLeft: 10 }}
-            onClick={() => navigate(`/course/${id}/manage-chapters`)}
-          >
-            Manage Chapters
-          </button>
-
-          <hr />
-
-          <h3>Chapters Preview</h3>
-
-          {chapters.map((ch) => (
-            <div
-              key={ch.id}
-              style={{ border: "1px solid #ccc", padding: 10, marginTop: 10 }}
+            {/* BACK BUTTON */}
+            <button
+                onClick={() => navigate("/instructor")}
+                style={{
+                    marginBottom: 20,
+                    padding: "8px 12px",
+                    cursor: "pointer"
+                }}
             >
-              <h4>{ch.title}</h4>
-              <p>
-                Status:{" "}
-                {ch.publicOrPrivate ? "Public" : "Private"}
-              </p>
+                ← Back to Dashboard
+            </button>
+
+            {/* COURSE INFO */}
+            <h1>{course?.title}</h1>
+            <p>{course?.description}</p>
+
+            <hr />
+
+            {/* ACTION BUTTONS */}
+            <div style={{ display: "flex", gap: "10px", marginBottom: "20px" }}>
+
+                <button onClick={() => navigate(`/course/${id}/create-chapter`)}>
+                    + Create Chapter
+                </button>
+
+                <button onClick={() => navigate(`/course/${id}/manage-chapters`)}>
+                    Manage Chapters
+                </button>
+
             </div>
-          ))}
-        </>
-      )}
-    </div>
-  );
+
+            {/* CHAPTER LIST */}
+            <h2>Chapters</h2>
+
+            {chapters.length === 0 ? (
+                <p>No chapters yet. Create your first one.</p>
+            ) : (
+                chapters.map((ch) => (
+                    <div
+                        key={ch.id}
+                        style={{
+                            border: "1px solid #ddd",
+                            padding: "12px",
+                            marginTop: "10px",
+                            borderRadius: "6px",
+                            background: "#fafafa"
+                        }}
+                    >
+                        <h3>{ch.title}</h3>
+
+                        <p>
+                            Visibility:{" "}
+                            <strong>
+                                {ch.publicOrPrivate ? "Public" : "Private"}
+                            </strong>
+                        </p>
+
+                        {/* READ CHAPTER BUTTON */}
+                        <button
+                            onClick={() => navigate(`/chapter/${ch.id}`)}
+                            style={{
+                                marginTop: "8px",
+                                padding: "6px 10px",
+                                cursor: "pointer"
+                            }}
+                        >
+                            Read Chapter
+                        </button>
+                    </div>
+                ))
+            )}
+        </div>
+    );
 }
 
 export default CourseDetail;
