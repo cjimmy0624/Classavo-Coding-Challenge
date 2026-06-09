@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import api from "../../api/axios";
+import api from "../api/axios";
 
 function ManageChapters() {
   const { id } = useParams();

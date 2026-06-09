@@ -1,6 +1,6 @@
 import React, { useMemo, useState, useEffect } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
-import api from "../../api/axios";
+import api from "../api/axios";
 
 import { Plate, createPlateEditor } from "@udecode/plate/react";
 

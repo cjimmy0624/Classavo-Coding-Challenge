@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import api from "../../api/axios";
+import api from "../api/axios";
 import { useParams, useNavigate } from "react-router-dom";
 
 function CourseDetail() {
