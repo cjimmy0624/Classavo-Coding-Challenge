@@ -6,10 +6,6 @@ from django.shortcuts import get_object_or_404
 from .models import Course, Chapter, Enrollment
 from .serializers import CourseSerializer, ChapterSerializer, EnrollmentSerializer
 
-
-# =========================
-# COURSES
-# =========================
 class CourseListCreateView(generics.ListCreateAPIView):
     serializer_class = CourseSerializer
     permission_classes = [permissions.IsAuthenticated]
@@ -41,10 +37,6 @@ class CourseDetailView(generics.RetrieveAPIView):
             "chapters": ChapterSerializer(chapters, many=True).data
         })
 
-
-# =========================
-# CHAPTERS
-# =========================
 class ChapterListView(generics.ListAPIView):
     serializer_class = ChapterSerializer
     permission_classes = [permissions.IsAuthenticated]
@@ -101,10 +93,6 @@ class ChapterDeleteView(generics.DestroyAPIView):
             raise PermissionDenied("Not allowed")
         instance.delete()
 
-
-# =========================
-# ENROLLMENT
-# =========================
 class EnrollmentCreateView(generics.CreateAPIView):
     serializer_class = EnrollmentSerializer
     permission_classes = [permissions.IsAuthenticated]
@@ -117,21 +105,17 @@ class EnrollmentCreateView(generics.CreateAPIView):
             course=course
         )
 
-        if not created:
+        if created:
             return Response(
-                {"message": "Already enrolled"},
-                status=status.HTTP_200_OK
+                {"message": "Joined course successfully"},
+                status=201
+            )
+        else:
+            return Response(
+                {"message": "You are already enrolled in this course"},
+                status=200
             )
 
-        return Response(
-            EnrollmentSerializer(enrollment).data,
-            status=status.HTTP_201_CREATED
-        )
-
-
-# =========================
-# STUDENT MY COURSES
-# =========================
 class StudentEnrolledCoursesView(generics.ListAPIView):
     serializer_class = CourseSerializer
     permission_classes = [permissions.IsAuthenticated]
