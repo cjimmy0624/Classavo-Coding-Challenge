@@ -1,49 +1,75 @@
-import React, { useMemo, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import api from '../../api/axios';
+import React, { useMemo, useState, useEffect } from "react";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
+import api from "../../api/axios";
 
-import { Plate, createPlateEditor } from '@udecode/plate/react';
+import { Plate, createPlateEditor } from "@udecode/plate/react";
 
 function CreateChapter() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
 
-  const [title, setTitle] = useState('');
+  const editingChapter = location.state?.chapter; // 👈 KEY FIX
+  const isEditMode = !!editingChapter;
+
+  const [title, setTitle] = useState("");
   const [isPublic, setIsPublic] = useState(false);
 
+  // Initialize editor
   const editor = useMemo(
     () =>
       createPlateEditor({
         value: [
           {
-            type: 'p',
-            children: [{ text: '' }]
-          }
-        ]
+            type: "p",
+            children: [{ text: "" }],
+          },
+        ],
       }),
     []
   );
 
+  // Load data when editing
+  useEffect(() => {
+    if (editingChapter) {
+      setTitle(editingChapter.title);
+      setIsPublic(editingChapter.publicOrPrivate);
+
+      // If content exists, load it into editor
+      try {
+        const parsed = JSON.parse(editingChapter.content);
+        editor.children = parsed;
+      } catch (err) {
+        console.log("Failed to load editor content:", err);
+      }
+    }
+  }, [editingChapter, editor]);
+
   const handleSubmit = async () => {
     try {
-      await api.post(`/courses/${id}/chapters/create/`, {
+      const payload = {
         title,
         content: JSON.stringify(editor.children),
-        publicOrPrivate: isPublic
-      });
+        publicOrPrivate: isPublic,
+      };
 
-      navigate(`/course/${id}`);
+      if (isEditMode) {
+        // ✅ UPDATE
+        await api.patch(`/chapters/${editingChapter.id}/`, payload);
+      } else {
+        // ✅ CREATE
+        await api.post(`/courses/${id}/chapters/create/`, payload);
+      }
+
+      navigate(`/course/${id}/manage-chapters`);
     } catch (err) {
-        console.log("FULL ERROR OBJECT:", err);
-        console.log("RESPONSE DATA:", err.response?.data);
-        console.log("STATUS:", err.response?.status);
-        console.log("HEADERS:", err.response?.headers);
+      console.log("ERROR:", err.response?.data || err);
     }
   };
 
   return (
     <div style={{ padding: 20 }}>
-      <h1>Create Chapter</h1>
+      <h1>{isEditMode ? "Edit Chapter" : "Create Chapter"}</h1>
 
       <input
         value={title}
@@ -71,8 +97,8 @@ function CreateChapter() {
           suppressContentEditableWarning
           style={{
             minHeight: 200,
-            border: '1px solid #ccc',
-            padding: 10
+            border: "1px solid #ccc",
+            padding: 10,
           }}
         />
       </Plate>
@@ -80,10 +106,13 @@ function CreateChapter() {
       <br />
 
       <button onClick={handleSubmit}>
-        Save Chapter
+        {isEditMode ? "Update Chapter" : "Save Chapter"}
       </button>
 
-      <button onClick={() => navigate(`/course/${id}`)} style={{ marginLeft: 10 }}>
+      <button
+        onClick={() => navigate(`/course/${id}/manage-chapters`)}
+        style={{ marginLeft: 10 }}
+      >
         Cancel
       </button>
     </div>

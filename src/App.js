@@ -27,22 +27,13 @@ function App() {
       <Route path="/create-course" element={<CreateCourse />} />
       <Route path="/course/:id" element={<CourseDetail />} />
 
-<<<<<<< HEAD
-=======
-      {/* chapter routes */}
->>>>>>> 1c03bae2124a1bd21860f16273d4b4369a7ae259
+      {/* chapters */}
       <Route path="/course/:id/create-chapter" element={<CreateChapter />} />
-
-      {/* EDIT CHAPTER (NEW) */}
-      <Route
-        path="/course/:courseId/chapter/:chapterId/edit"
-        element={<CreateChapter />}
-      />
-
       <Route path="/course/:id/manage-chapters" element={<ManageChapters />} />
 
       {/* student */}
-      <Route path="/student" element={<StudentPage />} />
+      <Route path="/student/courses" element={<StudentCourses />} />
+      <Route path="/student/course/:id" element={<StudentCourseDetail />} />
     </Routes>
   );
 }
