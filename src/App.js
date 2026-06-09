@@ -10,12 +10,13 @@ import CourseDetail from "./pages/instructor/CourseDetail";
 import CreateChapter from "./pages/instructor/CreateChapter";
 import ManageChapters from "./pages/instructor/ManageChapters";
 
-import StudentPage from "./pages/StudentPage";
+import StudentCourses from "./pages/student/StudentCourses";
+import StudentCourseDetail from "./pages/student/StudentCourseDetail";
 
 function App() {
   return (
     <Routes>
-      {/* default route */}
+      {/* default */}
       <Route path="/" element={<Navigate to="/login" />} />
 
       {/* auth */}
@@ -27,22 +28,12 @@ function App() {
       <Route path="/create-course" element={<CreateCourse />} />
       <Route path="/course/:id" element={<CourseDetail />} />
 
-<<<<<<< HEAD
-=======
-      {/* chapter routes */}
->>>>>>> 1c03bae2124a1bd21860f16273d4b4369a7ae259
       <Route path="/course/:id/create-chapter" element={<CreateChapter />} />
-
-      {/* EDIT CHAPTER (NEW) */}
-      <Route
-        path="/course/:courseId/chapter/:chapterId/edit"
-        element={<CreateChapter />}
-      />
-
       <Route path="/course/:id/manage-chapters" element={<ManageChapters />} />
 
       {/* student */}
-      <Route path="/student" element={<StudentPage />} />
+      <Route path="/student/courses" element={<StudentCourses />} />
+      <Route path="/student/course/:id" element={<StudentCourseDetail />} />
     </Routes>
   );
 }
