@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import api from "../../api/axios";
+import api from "../api/axios";
 
 function ChapterView() {
     const { id } = useParams();
@@ -13,13 +13,16 @@ function ChapterView() {
     }, [id]);
 
     const fetchChapter = async () => {
-        try {
-            const res = await api.get(`/chapters/${id}/`);
-            setChapter(res.data);
-        } catch (err) {
-            console.log(err);
-        }
-    };
+    try {
+        const res = await api.get(`/chapters/${id}/`);
+
+        // handles both API formats safely
+        setChapter(res.data.chapter || res.data);
+
+    } catch (err) {
+        console.log(err);
+    }
+};
 
     if (!chapter) return <h3>Loading...</h3>;
 
