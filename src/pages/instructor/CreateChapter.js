@@ -34,8 +34,10 @@ function CreateChapter() {
 
       navigate(`/course/${id}`);
     } catch (err) {
-        console.log("ERROR RESPONSE:", err.response?.data);
+        console.log("FULL ERROR OBJECT:", err);
+        console.log("RESPONSE DATA:", err.response?.data);
         console.log("STATUS:", err.response?.status);
+        console.log("HEADERS:", err.response?.headers);
     }
   };
 
