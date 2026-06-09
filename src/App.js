@@ -27,13 +27,13 @@ function App() {
       <Route path="/instructor" element={<InstructorDashboard />} />
       <Route path="/create-course" element={<CreateCourse />} />
       <Route path="/course/:id" element={<CourseDetail />} />
+
       <Route path="/course/:id/create-chapter" element={<CreateChapter />} />
       <Route path="/course/:id/manage-chapters" element={<ManageChapters />} />
 
       {/* student */}
       <Route path="/student/courses" element={<StudentCourses />} />
       <Route path="/student/course/:id" element={<StudentCourseDetail />} />
-
     </Routes>
   );
 }
