@@ -2,117 +2,91 @@ import React, { useMemo, useState } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import api from "../../api/axios";
 
+import { BoldPlugin } from "@udecode/plate-basic-marks/react";
 import { Plate, createPlateEditor, PlateContent } from "@udecode/plate/react";
+
+/* ---------------- QUESTION MODAL ---------------- */
 
 function QuestionModal({ onSave, onClose }) {
   const [questionText, setQuestionText] = useState("");
   const [choices, setChoices] = useState(["", "", "", ""]);
   const [correctIndex, setCorrectIndex] = useState(null);
 
-  const handleChoiceChange = (index, value) => {
-    const updated = [...choices];
-    updated[index] = value;
-    setChoices(updated);
+  const handleChoiceChange = (i, value) => {
+    const copy = [...choices];
+    copy[i] = value;
+    setChoices(copy);
   };
 
   const handleSave = () => {
-    if (!questionText.trim()) return alert("Please enter a question.");
-    if (choices.some(c => !c.trim())) return alert("Please fill in all 4 choices.");
-    if (correctIndex === null) return alert("Please select the correct answer.");
+    if (!questionText.trim()) return alert("Enter question");
+    if (choices.some((c) => !c.trim())) return alert("Fill all choices");
+    if (correctIndex === null) return alert("Select correct answer");
+
     onSave({ questionText, choices, correctIndex });
   };
 
   return (
-    <div style={{
-      position: "fixed", top: 0, left: 0, right: 0, bottom: 0,
-      backgroundColor: "rgba(0,0,0,0.5)",
-      display: "flex", alignItems: "center", justifyContent: "center",
-      zIndex: 1000,
-    }}>
-      <div style={{
-        backgroundColor: "white", borderRadius: 12, padding: 30,
-        width: 500, maxWidth: "90%",
-      }}>
-        <h2 style={{ marginTop: 0 }}>Create Question</h2>
+    <div style={overlay}>
+      <div style={modal}>
+        <h2>Create Question</h2>
 
-        <label style={{ fontWeight: "bold" }}>Question</label>
         <input
           value={questionText}
           onChange={(e) => setQuestionText(e.target.value)}
-          placeholder="Enter your question"
-          style={{ width: "100%", padding: 8, marginTop: 6, marginBottom: 16, boxSizing: "border-box" }}
+          placeholder="Question"
+          style={input}
         />
 
-        <label style={{ fontWeight: "bold" }}>Answer Choices</label>
-        <p style={{ fontSize: 12, color: "#666", margin: "4px 0 10px" }}>
-          Click the circle next to the correct answer
-        </p>
+        <br /><br />
 
-        {choices.map((choice, i) => (
-          <div key={i} style={{ display: "flex", alignItems: "center", marginBottom: 10 }}>
+        {choices.map((c, i) => (
+          <div key={i} style={{ display: "flex", marginBottom: 10 }}>
             <div
               onClick={() => setCorrectIndex(i)}
               style={{
-                width: 20, height: 20, borderRadius: "50%",
+                width: 20,
+                height: 20,
+                borderRadius: "50%",
                 border: "2px solid #7c3aed",
-                backgroundColor: correctIndex === i ? "#7c3aed" : "white",
-                cursor: "pointer", marginRight: 10, flexShrink: 0,
+                background: correctIndex === i ? "#7c3aed" : "white",
+                marginRight: 10,
+                cursor: "pointer",
               }}
             />
             <input
-              value={choice}
+              value={c}
               onChange={(e) => handleChoiceChange(i, e.target.value)}
               placeholder={`Choice ${i + 1}`}
-              style={{ flex: 1, padding: 8 }}
             />
           </div>
         ))}
 
-        <div style={{ display: "flex", justifyContent: "flex-end", gap: 10, marginTop: 20 }}>
-          <button onClick={onClose} style={{ padding: "8px 16px" }}>Cancel</button>
-          <button
-            onClick={handleSave}
-            style={{ padding: "8px 16px", backgroundColor: "#7c3aed", color: "white", border: "none", borderRadius: 6, cursor: "pointer" }}
-          >
-            Add Question
-          </button>
-        </div>
+        <button onClick={handleSave} style={saveBtn}>
+          Add Question
+        </button>
+
+        <button onClick={onClose}>Cancel</button>
       </div>
     </div>
   );
 }
 
+/* ---------------- QUESTION BLOCK ---------------- */
+
 function QuestionBlock({ question, onRemove }) {
   return (
-    <div style={{
-      border: "1px solid #e5e7eb", borderRadius: 8, padding: 16,
-      margin: "12px 0", backgroundColor: "#f9fafb", position: "relative",
-    }}>
-      <p style={{ fontWeight: "bold", marginTop: 0 }}>{question.questionText}</p>
-      {question.choices.map((choice, i) => (
-        <div key={i} style={{ display: "flex", alignItems: "center", marginBottom: 8 }}>
-          <div style={{
-            width: 18, height: 18, borderRadius: "50%",
-            border: `2px solid ${i === question.correctIndex ? "#7c3aed" : "#d1d5db"}`,
-            backgroundColor: i === question.correctIndex ? "#7c3aed" : "white",
-            marginRight: 10, flexShrink: 0,
-          }} />
-          <span>{choice}</span>
-        </div>
+    <div style={block}>
+      <b>{question.questionText}</b>
+      {question.choices.map((c, i) => (
+        <div key={i}>{c}</div>
       ))}
-      <button
-        onClick={onRemove}
-        style={{
-          position: "absolute", top: 8, right: 8,
-          background: "none", border: "none",
-          color: "#ef4444", cursor: "pointer", fontSize: 16,
-        }}
-      >
-        ✕
-      </button>
+      <button onClick={onRemove}>Delete</button>
     </div>
   );
 }
+
+/* ---------------- MAIN ---------------- */
 
 function CreateChapter() {
   const { id } = useParams();
@@ -122,76 +96,110 @@ function CreateChapter() {
   const editingChapter = location.state?.chapter;
   const isEditMode = !!editingChapter;
 
-  const [title, setTitle] = useState(editingChapter ? editingChapter.title : "");
-  const [isPublic, setIsPublic] = useState(editingChapter ? editingChapter.publicOrPrivate : false);
-  const [showQuestionModal, setShowQuestionModal] = useState(false);
+  const [title, setTitle] = useState(editingChapter?.title || "");
+  const [isPublic, setIsPublic] = useState(
+    editingChapter?.publicOrPrivate || false
+  );
+
   const [questions, setQuestions] = useState(() => {
     try {
-      const parsed = editingChapter ? JSON.parse(editingChapter.content) : null;
-      return parsed?.questions || [];
+      const parsed = JSON.parse(editingChapter.content);
+      return parsed.questions || [];
     } catch {
       return [];
     }
   });
 
+  const [showModal, setShowModal] = useState(false);
+
+  const [plusPos, setPlusPos] = useState(null);
+  const [showDropdown, setShowDropdown] = useState(false);
+
+  /* ---------------- EDITOR INITIAL VALUE ---------------- */
+
   const initialValue = useMemo(() => {
     try {
-      const parsed = editingChapter ? JSON.parse(editingChapter.content) : null;
-      return parsed?.text || [{ type: "p", children: [{ text: "" }] }];
+      return JSON.parse(editingChapter.content).text;
     } catch {
-      return [{ type: "p", children: [{ text: "" }] }];
+      return [
+        {
+          type: "p",
+          children: [{ text: "" }],
+        },
+      ];
     }
   }, [editingChapter]);
 
+  /* ---------------- EDITOR ---------------- */
+
   const editor = useMemo(
-    () => createPlateEditor({ value: initialValue }),
+    () =>
+      createPlateEditor({
+        plugins: [BoldPlugin],
+        value: initialValue,
+        override: {
+          components: {
+            bold: ({ children }) => <strong>{children}</strong>,
+          },
+        },
+      }),
     [initialValue]
   );
 
-  const handleAddQuestion = (question) => {
-    setQuestions([...questions, question]);
-    setShowQuestionModal(false);
-  };
+  /* ---------------- HANDLERS ---------------- */
 
-  const handleRemoveQuestion = (index) => {
-    setQuestions(questions.filter((_, i) => i !== index));
+  const handleAddQuestion = (q) => {
+    setQuestions((prev) => [...prev, q]);
+    setShowModal(false);
   };
 
   const handleSubmit = async () => {
-    try {
-      const payload = {
-        title,
-        content: JSON.stringify({
-          text: editor.children,
-          questions,
-        }),
-        publicOrPrivate: isPublic,
-      };
+    const payload = {
+      title,
+      content: JSON.stringify({
+        text: editor.children,
+        questions,
+      }),
+      publicOrPrivate: isPublic,
+    };
 
-      if (isEditMode) {
-        await api.patch(`/chapters/${editingChapter.id}/`, payload);
-      } else {
-        await api.post(`/courses/${id}/chapters/create/`, payload);
-      }
-
-      navigate(`/course/${id}/manage-chapters`);
-    } catch (err) {
-      console.log("ERROR:", err.response?.data || err);
+    if (isEditMode) {
+      await api.patch(`/chapters/${editingChapter.id}/`, payload);
+    } else {
+      await api.post(`/courses/${id}/chapters/create/`, payload);
     }
+
+    navigate(`/course/${id}/manage-chapters`);
   };
+
+  /* ---------------- CURSOR TRACKING ---------------- */
+
+  const handleSelect = () => {
+    const sel = window.getSelection();
+    if (!sel || sel.rangeCount === 0) return;
+
+    const range = sel.getRangeAt(0);
+    const rect = range.getBoundingClientRect();
+
+    if (!rect) return;
+
+    setPlusPos({
+      top: rect.top + window.scrollY,
+      left: rect.left + window.scrollX - 35,
+    });
+  };
+
+  /* ---------------- UI ---------------- */
 
   return (
     <div style={{ padding: 20 }}>
-      <h1>{isEditMode ? "Edit Chapter  V2" : "Create Chapter V2"}</h1>
+      <h1>{isEditMode ? "Edit" : "Create"} Chapter</h1>
 
       <input
         value={title}
         onChange={(e) => setTitle(e.target.value)}
         placeholder="Chapter title"
-        style={{ width: 300, padding: 8 }}
       />
-
-      <br /><br />
 
       <label>
         <input
@@ -202,73 +210,165 @@ function CreateChapter() {
         Public Chapter
       </label>
 
-      <br /><br />
+      {/* ---------------- EDITOR ---------------- */}
+      <div style={{ position: "relative" }}>
+        <Plate editor={editor}>
+          <PlateContent
+            placeholder="Write your chapter..."
+            onSelect={handleSelect}
+            onKeyDown={(e) => {
+              if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "b") {
+                e.preventDefault();
+                editor.tf.toggleMark({ key: "bold" });
+              }
+            }}
+            style={{
+              minHeight: 200,
+              border: "1px solid #ccc",
+              padding: 20,
+              borderRadius: 8,
+            }}
+          />
+        </Plate>
 
-      <Plate editor={editor}>
-        <PlateContent
-          placeholder="Write your chapter..."
-          style={{
-            minHeight: 200,
-            border: "1px solid #ccc",
-            padding: 10,
-            borderRadius: 6,
-          }}
-        />
-      </Plate>
+        {/* ---------------- INLINE + BUTTON ---------------- */}
+        {plusPos && (
+          <button
+            onClick={() => setShowDropdown(true)}
+            style={{
+              position: "absolute",
+              top: plusPos.top,
+              left: plusPos.left,
+              width: 28,
+              height: 28,
+              borderRadius: "50%",
+              background: "#7c3aed",
+              color: "white",
+              border: "none",
+              cursor: "pointer",
+              zIndex: 1000,
+            }}
+          >
+            +
+          </button>
+        )}
 
-      <br />
-
-      {/* Add Question button */}
-      <button
-        onClick={() => setShowQuestionModal(true)}
-        style={{
-          padding: "8px 16px",
-          backgroundColor: "#7c3aed",
-          color: "white",
-          border: "none",
-          borderRadius: 6,
-          cursor: "pointer",
-          marginBottom: 16,
-        }}
-      >
-        + Add Question
-      </button>
-
-      {/* Questions list */}
-      {questions.length > 0 && (
-        <div>
-          <h3>Questions ({questions.length})</h3>
-          {questions.map((q, i) => (
-            <QuestionBlock
-              key={i}
-              question={q}
-              onRemove={() => handleRemoveQuestion(i)}
+        {/* ---------------- DROPDOWN ---------------- */}
+        {showDropdown && plusPos && (
+          <>
+            <div
+              onClick={() => setShowDropdown(false)}
+              style={{
+                position: "fixed",
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+              }}
             />
-          ))}
-        </div>
-      )}
 
-      <br />
+            <div
+              style={{
+                position: "absolute",
+                top: plusPos.top + 30,
+                left: plusPos.left,
+                background: "white",
+                boxShadow: "0 5px 15px rgba(0,0,0,0.2)",
+                borderRadius: 8,
+                width: 160,
+                zIndex: 1001,
+              }}
+            >
+              <button
+                onClick={() => {
+                  setShowModal(true);
+                  setShowDropdown(false);
+                }}
+                style={{
+                  width: "100%",
+                  padding: 10,
+                  border: "none",
+                  background: "transparent",
+                  textAlign: "left",
+                  cursor: "pointer",
+                }}
+              >
+                ➕ Add Question
+              </button>
+            </div>
+          </>
+        )}
+      </div>
 
-      <button onClick={handleSubmit}>
-        {isEditMode ? "Update Chapter" : "Save Chapter"}
-      </button>
+      {/* ---------------- QUESTIONS ---------------- */}
+      <h3>Questions</h3>
 
-      <button
-        onClick={() => navigate(`/course/${id}/manage-chapters`)}
-        style={{ marginLeft: 10 }}
-      >
+      {questions.map((q, i) => (
+        <QuestionBlock
+          key={i}
+          question={q}
+          onRemove={() =>
+            setQuestions((prev) => prev.filter((_, idx) => idx !== i))
+          }
+        />
+      ))}
+
+      <button onClick={handleSubmit}>Save Chapter</button>
+
+      <button onClick={() => navigate(`/course/${id}/manage-chapters`)}>
         Cancel
       </button>
 
-      {showQuestionModal && (
+      {/* ---------------- MODAL ---------------- */}
+      {showModal && (
         <QuestionModal
           onSave={handleAddQuestion}
-          onClose={() => setShowQuestionModal(false)}
+          onClose={() => setShowModal(false)}
         />
       )}
     </div>
   );
 }
+
+/* ---------------- STYLES ---------------- */
+
+const overlay = {
+  position: "fixed",
+  top: 0,
+  left: 0,
+  right: 0,
+  bottom: 0,
+  background: "rgba(0,0,0,.5)",
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+  zIndex: 2000,
+};
+
+const modal = {
+  background: "white",
+  padding: 30,
+  borderRadius: 12,
+  width: 500,
+};
+
+const input = {
+  width: "100%",
+  padding: 8,
+};
+
+const saveBtn = {
+  background: "#7c3aed",
+  color: "white",
+  padding: 10,
+  border: "none",
+};
+
+const block = {
+  border: "1px solid #ddd",
+  padding: 15,
+  borderRadius: 8,
+  margin: 10,
+};
 
 export default CreateChapter;
