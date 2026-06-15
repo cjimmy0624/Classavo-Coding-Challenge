@@ -1,8 +1,5 @@
 from rest_framework import generics, permissions
 from rest_framework_simplejwt.views import TokenObtainPairView
-<<<<<<< HEAD
-from .serializers import UserRegistrationSerializer, CustomTokenObtainPairSerializer
-=======
 
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -18,16 +15,11 @@ from .serializers import (
 # ----------------------------
 # AUTH VIEWS (UNCHANGED)
 # ----------------------------
->>>>>>> dec87e8df6d6e7bcc4bb021b8b3fe900d03b0ce3
 
 class UserRegistrationView(generics.CreateAPIView):
     serializer_class = UserRegistrationSerializer
     permission_classes = [permissions.AllowAny]
 
-<<<<<<< HEAD
-class CustomTokenObtainPairView(TokenObtainPairView):
-    serializer_class = CustomTokenObtainPairSerializer
-=======
 
 class CustomTokenObtainPairView(TokenObtainPairView):
     serializer_class = CustomTokenObtainPairSerializer
@@ -83,4 +75,3 @@ User question:
 
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=500)
->>>>>>> dec87e8df6d6e7bcc4bb021b8b3fe900d03b0ce3
