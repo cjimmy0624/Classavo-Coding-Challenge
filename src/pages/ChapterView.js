@@ -45,8 +45,11 @@ function ChapterView() {
   const navigate = useNavigate();
 
   const [chapter, setChapter] = useState(null);
+<<<<<<< HEAD
   const [textContent, setTextContent] = useState(null);
   const [questions, setQuestions] = useState([]);
+=======
+>>>>>>> fd6e9a221cea24033ef3ac5da85bc0a19f4fd0fc
 
   useEffect(() => {
     fetchChapter();
@@ -55,6 +58,7 @@ function ChapterView() {
   const fetchChapter = async () => {
     try {
       const res = await api.get(`/chapters/${id}/`);
+<<<<<<< HEAD
       const data = res.data.chapter || res.data;
       setChapter(data);
 
@@ -76,11 +80,15 @@ function ChapterView() {
         setQuestions([]);
       }
 
+=======
+      setChapter(res.data.chapter || res.data);
+>>>>>>> fd6e9a221cea24033ef3ac5da85bc0a19f4fd0fc
     } catch (err) {
       console.log(err);
     }
   };
 
+<<<<<<< HEAD
   if (!chapter) return <h3>Loading...</h3>;
 
   return (
@@ -103,6 +111,52 @@ function ChapterView() {
           ))}
         </div>
       )}
+=======
+  const renderContent = (content) => {
+    if (!content) return "";
+
+    try {
+      const parsed =
+        typeof content === "string" ? JSON.parse(content) : content;
+
+      if (!Array.isArray(parsed)) return content;
+
+      return parsed
+        .map((block) =>
+          block.children?.map((child) => child.text).join("") || ""
+        )
+        .join("\n\n");
+    } catch (e) {
+      return content;
+    }
+  };
+
+  if (!chapter) return <h3>Loading...</h3>;
+
+  return (
+    <div style={{ padding: 20 }}>
+
+      {/* BACK BUTTON */}
+      <button onClick={() => navigate(-1)}>
+        ← Go Back
+      </button>
+
+      {/* TITLE */}
+      <h1 style={{ marginTop: 20 }}>{chapter.title}</h1>
+
+      {/* CONTENT */}
+      <div
+        style={{
+          marginTop: 20,
+          whiteSpace: "pre-wrap",
+          lineHeight: "1.6",
+          fontSize: "16px",
+        }}
+      >
+        {renderContent(chapter.content)}
+      </div>
+
+>>>>>>> fd6e9a221cea24033ef3ac5da85bc0a19f4fd0fc
     </div>
   );
 }
