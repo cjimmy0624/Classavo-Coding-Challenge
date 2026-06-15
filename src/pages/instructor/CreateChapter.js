@@ -112,25 +112,39 @@ function CreateChapter() {
 
   const [showModal, setShowModal] = useState(false);
 
+  /* ---------------- AI STATE ---------------- */
+
+  const [showAIModal, setShowAIModal] = useState(false);
+  const [aiPrompt, setAiPrompt] = useState("");
+  const [aiResponse, setAiResponse] = useState("");
+  const [aiLoading, setAiLoading] = useState(false);
+
+  /* ---------------- CURSOR POSITION ---------------- */
+
   const [plusPos, setPlusPos] = useState(null);
   const [showDropdown, setShowDropdown] = useState(false);
 
-  /* ---------------- EDITOR INITIAL VALUE ---------------- */
+  const handleSelect = () => {
+    const sel = window.getSelection();
+    if (!sel || sel.rangeCount === 0) return;
+
+    const rect = sel.getRangeAt(0).getBoundingClientRect();
+
+    setPlusPos({
+      top: rect.top + window.scrollY,
+      left: rect.left + window.scrollX - 35,
+    });
+  };
+
+  /* ---------------- EDITOR ---------------- */
 
   const initialValue = useMemo(() => {
     try {
       return JSON.parse(editingChapter.content).text;
     } catch {
-      return [
-        {
-          type: "p",
-          children: [{ text: "" }],
-        },
-      ];
+      return [{ type: "p", children: [{ text: "" }] }];
     }
   }, [editingChapter]);
-
-  /* ---------------- EDITOR ---------------- */
 
   const editor = useMemo(
     () =>
@@ -170,23 +184,6 @@ function CreateChapter() {
     }
 
     navigate(`/course/${id}/manage-chapters`);
-  };
-
-  /* ---------------- CURSOR TRACKING ---------------- */
-
-  const handleSelect = () => {
-    const sel = window.getSelection();
-    if (!sel || sel.rangeCount === 0) return;
-
-    const range = sel.getRangeAt(0);
-    const rect = range.getBoundingClientRect();
-
-    if (!rect) return;
-
-    setPlusPos({
-      top: rect.top + window.scrollY,
-      left: rect.left + window.scrollX - 35,
-    });
   };
 
   /* ---------------- UI ---------------- */
@@ -231,7 +228,7 @@ function CreateChapter() {
           />
         </Plate>
 
-        {/* ---------------- INLINE + BUTTON ---------------- */}
+        {/* ---------------- + BUTTON ---------------- */}
         {plusPos && (
           <button
             onClick={() => setShowDropdown(true)}
@@ -275,7 +272,7 @@ function CreateChapter() {
                 background: "white",
                 boxShadow: "0 5px 15px rgba(0,0,0,0.2)",
                 borderRadius: 8,
-                width: 160,
+                width: 180,
                 zIndex: 1001,
               }}
             >
@@ -284,16 +281,19 @@ function CreateChapter() {
                   setShowModal(true);
                   setShowDropdown(false);
                 }}
-                style={{
-                  width: "100%",
-                  padding: 10,
-                  border: "none",
-                  background: "transparent",
-                  textAlign: "left",
-                  cursor: "pointer",
-                }}
+                style={dropdownItem}
               >
                 ➕ Add Question
+              </button>
+
+              <button
+                onClick={() => {
+                  setShowAIModal(true);
+                  setShowDropdown(false);
+                }}
+                style={dropdownItem}
+              >
+                🤖 Ask AI
               </button>
             </div>
           </>
@@ -319,12 +319,59 @@ function CreateChapter() {
         Cancel
       </button>
 
-      {/* ---------------- MODAL ---------------- */}
+      {/* ---------------- QUESTION MODAL ---------------- */}
       {showModal && (
         <QuestionModal
           onSave={handleAddQuestion}
           onClose={() => setShowModal(false)}
         />
+      )}
+
+      {/* ---------------- AI MODAL ---------------- */}
+      {showAIModal && (
+        <div style={overlay}>
+          <div style={modal}>
+            <h2>Ask AI</h2>
+
+            <textarea
+              value={aiPrompt}
+              onChange={(e) => setAiPrompt(e.target.value)}
+              placeholder="Ask something about this chapter..."
+              style={{ width: "100%", height: 120, padding: 10 }}
+            />
+
+            <button
+              onClick={async () => {
+                setAiLoading(true);
+                setAiResponse("");
+
+                try {
+                  const res = await api.post("/ai/ask/", {
+                    prompt: aiPrompt,
+                    context: JSON.stringify(editor.children),
+                  });
+
+                  setAiResponse(res.data.answer);
+                } catch {
+                  setAiResponse("Error getting AI response");
+                }
+
+                setAiLoading(false);
+              }}
+              style={saveBtn}
+            >
+              {aiLoading ? "Thinking..." : "Ask"}
+            </button>
+
+            {aiResponse && (
+              <div style={{ marginTop: 10, padding: 10, background: "#f3f4f6" }}>
+                {aiResponse}
+              </div>
+            )}
+
+            <button onClick={() => setShowAIModal(false)}>Close</button>
+          </div>
+        </div>
       )}
     </div>
   );
@@ -369,6 +416,15 @@ const block = {
   padding: 15,
   borderRadius: 8,
   margin: 10,
+};
+
+const dropdownItem = {
+  width: "100%",
+  padding: 10,
+  border: "none",
+  background: "transparent",
+  textAlign: "left",
+  cursor: "pointer",
 };
 
 export default CreateChapter;
