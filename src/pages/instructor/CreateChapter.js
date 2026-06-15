@@ -3,7 +3,6 @@ import { useParams, useNavigate, useLocation } from "react-router-dom";
 import api from "../../api/axios";
 
 import { Plate, createPlateEditor, PlateContent } from "@udecode/plate/react";
-<<<<<<< HEAD
 
 function QuestionModal({ onSave, onClose }) {
   const [questionText, setQuestionText] = useState("");
@@ -83,11 +82,11 @@ function QuestionModal({ onSave, onClose }) {
   );
 }
 
-function QuestionBlock({ question }) {
+function QuestionBlock({ question, onRemove }) {
   return (
     <div style={{
       border: "1px solid #e5e7eb", borderRadius: 8, padding: 16,
-      margin: "12px 0", backgroundColor: "#f9fafb",
+      margin: "12px 0", backgroundColor: "#f9fafb", position: "relative",
     }}>
       <p style={{ fontWeight: "bold", marginTop: 0 }}>{question.questionText}</p>
       {question.choices.map((choice, i) => (
@@ -101,11 +100,19 @@ function QuestionBlock({ question }) {
           <span>{choice}</span>
         </div>
       ))}
+      <button
+        onClick={onRemove}
+        style={{
+          position: "absolute", top: 8, right: 8,
+          background: "none", border: "none",
+          color: "#ef4444", cursor: "pointer", fontSize: 16,
+        }}
+      >
+        ✕
+      </button>
     </div>
   );
 }
-=======
->>>>>>> fd6e9a221cea24033ef3ac5da85bc0a19f4fd0fc
 
 function CreateChapter() {
   const { id } = useParams();
@@ -117,7 +124,6 @@ function CreateChapter() {
 
   const [title, setTitle] = useState(editingChapter ? editingChapter.title : "");
   const [isPublic, setIsPublic] = useState(editingChapter ? editingChapter.publicOrPrivate : false);
-  const [showPlusMenu, setShowPlusMenu] = useState(false);
   const [showQuestionModal, setShowQuestionModal] = useState(false);
   const [questions, setQuestions] = useState(() => {
     try {
@@ -137,48 +143,20 @@ function CreateChapter() {
     }
   }, [editingChapter]);
 
-<<<<<<< HEAD
-=======
-  // ✅ Correct editor setup
->>>>>>> fd6e9a221cea24033ef3ac5da85bc0a19f4fd0fc
   const editor = useMemo(
     () => createPlateEditor({ value: initialValue }),
     [initialValue]
   );
 
-<<<<<<< HEAD
   const handleAddQuestion = (question) => {
     setQuestions([...questions, question]);
     setShowQuestionModal(false);
-    setShowPlusMenu(false);
   };
 
   const handleRemoveQuestion = (index) => {
     setQuestions(questions.filter((_, i) => i !== index));
   };
-=======
-  // ✅ Load chapter when editing
-  useEffect(() => {
-    if (editingChapter) {
-      setTitle(editingChapter.title);
-      setIsPublic(editingChapter.publicOrPrivate);
 
-      try {
-        const parsed =
-          typeof editingChapter.content === "string"
-            ? JSON.parse(editingChapter.content)
-            : editingChapter.content;
-
-        // IMPORTANT: assign safely
-        editor.children = parsed;
-      } catch (err) {
-        console.log("Failed to load content:", err);
-      }
-    }
-  }, [editingChapter, editor]);
->>>>>>> fd6e9a221cea24033ef3ac5da85bc0a19f4fd0fc
-
-  // ✅ Save chapter
   const handleSubmit = async () => {
     try {
       const payload = {
@@ -204,9 +182,8 @@ function CreateChapter() {
 
   return (
     <div style={{ padding: 20 }}>
-      <h1>{isEditMode ? "Edit Chapter" : "Create Chapter"}</h1>
+      <h1>{isEditMode ? "Edit Chapter  V2" : "Create Chapter V2"}</h1>
 
-      {/* TITLE */}
       <input
         value={title}
         onChange={(e) => setTitle(e.target.value)}
@@ -216,7 +193,6 @@ function CreateChapter() {
 
       <br /><br />
 
-      {/* PUBLIC CHECKBOX */}
       <label>
         <input
           type="checkbox"
@@ -228,13 +204,9 @@ function CreateChapter() {
 
       <br /><br />
 
-      {/*PROPER PLATE EDITOR (FIXED) */}
       <Plate editor={editor}>
         <PlateContent
-<<<<<<< HEAD
           placeholder="Write your chapter..."
-=======
->>>>>>> fd6e9a221cea24033ef3ac5da85bc0a19f4fd0fc
           style={{
             minHeight: 200,
             border: "1px solid #ccc",
@@ -244,66 +216,40 @@ function CreateChapter() {
         />
       </Plate>
 
+      <br />
+
+      {/* Add Question button */}
+      <button
+        onClick={() => setShowQuestionModal(true)}
+        style={{
+          padding: "8px 16px",
+          backgroundColor: "#7c3aed",
+          color: "white",
+          border: "none",
+          borderRadius: 6,
+          cursor: "pointer",
+          marginBottom: 16,
+        }}
+      >
+        + Add Question
+      </button>
+
       {/* Questions list */}
       {questions.length > 0 && (
-        <div style={{ marginTop: 16 }}>
-          <h3>Questions</h3>
+        <div>
+          <h3>Questions ({questions.length})</h3>
           {questions.map((q, i) => (
-            <div key={i} style={{ position: "relative" }}>
-              <QuestionBlock question={q} />
-              <button
-                onClick={() => handleRemoveQuestion(i)}
-                style={{
-                  position: "absolute", top: 8, right: 8,
-                  background: "none", border: "none",
-                  color: "#ef4444", cursor: "pointer", fontSize: 16,
-                }}
-              >
-                ✕
-              </button>
-            </div>
+            <QuestionBlock
+              key={i}
+              question={q}
+              onRemove={() => handleRemoveQuestion(i)}
+            />
           ))}
         </div>
       )}
 
-      {/* + button and menu */}
-      <div style={{ marginTop: 16, position: "relative", display: "inline-block" }}>
-        <button
-          onClick={() => setShowPlusMenu(!showPlusMenu)}
-          style={{
-            width: 36, height: 36, borderRadius: "50%",
-            backgroundColor: "#7c3aed", color: "white",
-            border: "none", fontSize: 20, cursor: "pointer",
-            display: "flex", alignItems: "center", justifyContent: "center",
-          }}
-        >
-          {showPlusMenu ? "✕" : "+"}
-        </button>
+      <br />
 
-        {showPlusMenu && (
-          <div style={{
-            position: "absolute", top: 44, left: 0,
-            backgroundColor: "white", border: "1px solid #e5e7eb",
-            borderRadius: 8, padding: 8, boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
-            zIndex: 100,
-          }}>
-            <button
-              onClick={() => { setShowQuestionModal(true); }}
-              style={{
-                display: "flex", alignItems: "center", gap: 8,
-                padding: "8px 16px", background: "none", border: "none",
-                cursor: "pointer", whiteSpace: "nowrap", fontSize: 14,
-              }}
-            >
-              ❓ Question
-            </button>
-          </div>
-        )}
-      </div>
-
-      <br /><br />
-
-      {/* SAVE BUTTON */}
       <button onClick={handleSubmit}>
         {isEditMode ? "Update Chapter" : "Save Chapter"}
       </button>
@@ -318,7 +264,7 @@ function CreateChapter() {
       {showQuestionModal && (
         <QuestionModal
           onSave={handleAddQuestion}
-          onClose={() => { setShowQuestionModal(false); setShowPlusMenu(false); }}
+          onClose={() => setShowQuestionModal(false)}
         />
       )}
     </div>
