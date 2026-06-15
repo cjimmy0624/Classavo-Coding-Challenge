@@ -1,11 +1,9 @@
 from rest_framework import generics, permissions
 from rest_framework_simplejwt.views import TokenObtainPairView
-<<<<<<< HEAD
-from .serializers import UserRegistrationSerializer, CustomTokenObtainPairSerializer
-=======
 
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+
 import json
 import os
 from openai import OpenAI
@@ -16,29 +14,34 @@ from .serializers import (
 )
 
 # ----------------------------
-# AUTH VIEWS (UNCHANGED)
+# OPENAI CLIENT (SAFE FACTORY)
 # ----------------------------
->>>>>>> dec87e8df6d6e7bcc4bb021b8b3fe900d03b0ce3
+
+def get_openai_client():
+    api_key = os.getenv("OPENAI_API_KEY")
+
+    if not api_key:
+        raise Exception("OPENAI_API_KEY is missing in environment variables")
+
+    return OpenAI(api_key=api_key)
+
+
+# ----------------------------
+# AUTH VIEWS
+# ----------------------------
 
 class UserRegistrationView(generics.CreateAPIView):
     serializer_class = UserRegistrationSerializer
     permission_classes = [permissions.AllowAny]
 
-<<<<<<< HEAD
-class CustomTokenObtainPairView(TokenObtainPairView):
-    serializer_class = CustomTokenObtainPairSerializer
-=======
 
 class CustomTokenObtainPairView(TokenObtainPairView):
     serializer_class = CustomTokenObtainPairSerializer
 
 
 # ----------------------------
-# AI VIEW (NEW)
+# AI VIEW
 # ----------------------------
-
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
-
 
 @csrf_exempt
 def ask_ai(request):
@@ -46,13 +49,15 @@ def ask_ai(request):
         return JsonResponse({"error": "POST only"}, status=400)
 
     try:
-        data = json.loads(request.body)
+        data = json.loads(request.body or "{}")
 
-        prompt = data.get("prompt", "")
+        prompt = data.get("prompt", "").strip()
         context = data.get("context", "")
 
         if not prompt:
             return JsonResponse({"error": "Prompt is required"}, status=400)
+
+        client = get_openai_client()
 
         response = client.chat.completions.create(
             model="gpt-4o-mini",
@@ -82,5 +87,6 @@ User question:
         })
 
     except Exception as e:
-        return JsonResponse({"error": str(e)}, status=500)
->>>>>>> dec87e8df6d6e7bcc4bb021b8b3fe900d03b0ce3
+        return JsonResponse({
+            "error": str(e)
+        }, status=500)

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import api from "../api/axios";
 
@@ -125,33 +125,33 @@ function ChapterView() {
 
   useEffect(() => {
     fetchChapter();
-  }, [id]);
+  }, [fetchChapter]);
 
-  const fetchChapter = async () => {
+  const fetchChapter = useCallback(async () => {
+  try {
+    const res = await api.get(`/chapters/${id}/`);
+    const data = res.data.chapter || res.data;
+    setChapter(data);
+
     try {
-      const res = await api.get(`/chapters/${id}/`);
-      const data = res.data.chapter || res.data;
-      setChapter(data);
+      const parsed = JSON.parse(data.content);
 
-      try {
-        const parsed = JSON.parse(data.content);
-
-        if (parsed?.text && parsed?.questions !== undefined) {
-          setTextContent(parsed.text);
-          setQuestions(parsed.questions);
-        } else if (Array.isArray(parsed)) {
-          setTextContent(parsed);
-          setQuestions([]);
-        }
-      } catch {
-        setTextContent(null);
+      if (parsed?.text && parsed?.questions !== undefined) {
+        setTextContent(parsed.text);
+        setQuestions(parsed.questions);
+      } else if (Array.isArray(parsed)) {
+        setTextContent(parsed);
         setQuestions([]);
       }
-
-    } catch (err) {
-      console.log(err);
+    } catch {
+      setTextContent(null);
+      setQuestions([]);
     }
-  };
+
+  } catch (err) {
+    console.log(err);
+  }
+}, [id]);
 
   if (!chapter) return <h3>Loading...</h3>;
 
