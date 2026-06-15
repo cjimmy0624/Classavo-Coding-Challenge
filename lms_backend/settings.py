@@ -9,6 +9,7 @@ https://docs.djangoproject.com/en/6.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.0/ref/settings/
 """
+<<<<<<< HEAD
 
 from pathlib import Path
 
@@ -18,6 +19,20 @@ SECRET_KEY = 'django-insecure-%2!%4ghh-re00^@c16if5cq5^p0k4t86ps=198yzyx32kulnqe
 
 DEBUG = True
 
+=======
+from pathlib import Path
+import os
+from dotenv import load_dotenv
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+#Load .env correctly
+load_dotenv(dotenv_path=os.path.join(BASE_DIR, ".env"))
+
+# SECURITY
+SECRET_KEY = 'django-insecure-%2!%4ghh-re00^@c16if5cq5^p0k4t86ps=198yzyx32kulnqe'
+DEBUG = True
+>>>>>>> dec87e8df6d6e7bcc4bb021b8b3fe900d03b0ce3
 ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
@@ -96,4 +111,10 @@ REST_FRAMEWORK = {
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
+<<<<<<< HEAD
 ]
+=======
+]
+
+print("OPENAI KEY LOADED:", os.getenv("OPENAI_API_KEY"))
+>>>>>>> dec87e8df6d6e7bcc4bb021b8b3fe900d03b0ce3

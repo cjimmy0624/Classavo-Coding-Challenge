@@ -112,6 +112,7 @@ function CreateChapter() {
 
   const [showModal, setShowModal] = useState(false);
 
+<<<<<<< HEAD
   /* ---------------- AI STATE ---------------- */
 
   const [showAIModal, setShowAIModal] = useState(false);
@@ -137,15 +138,35 @@ function CreateChapter() {
   };
 
   /* ---------------- EDITOR ---------------- */
+=======
+  const [plusPos, setPlusPos] = useState(null);
+  const [showDropdown, setShowDropdown] = useState(false);
+
+  /* ---------------- EDITOR INITIAL VALUE ---------------- */
+>>>>>>> dec87e8df6d6e7bcc4bb021b8b3fe900d03b0ce3
 
   const initialValue = useMemo(() => {
     try {
       return JSON.parse(editingChapter.content).text;
     } catch {
+<<<<<<< HEAD
       return [{ type: "p", children: [{ text: "" }] }];
     }
   }, [editingChapter]);
 
+=======
+      return [
+        {
+          type: "p",
+          children: [{ text: "" }],
+        },
+      ];
+    }
+  }, [editingChapter]);
+
+  /* ---------------- EDITOR ---------------- */
+
+>>>>>>> dec87e8df6d6e7bcc4bb021b8b3fe900d03b0ce3
   const editor = useMemo(
     () =>
       createPlateEditor({
@@ -186,6 +207,26 @@ function CreateChapter() {
     navigate(`/course/${id}/manage-chapters`);
   };
 
+<<<<<<< HEAD
+=======
+  /* ---------------- CURSOR TRACKING ---------------- */
+
+  const handleSelect = () => {
+    const sel = window.getSelection();
+    if (!sel || sel.rangeCount === 0) return;
+
+    const range = sel.getRangeAt(0);
+    const rect = range.getBoundingClientRect();
+
+    if (!rect) return;
+
+    setPlusPos({
+      top: rect.top + window.scrollY,
+      left: rect.left + window.scrollX - 35,
+    });
+  };
+
+>>>>>>> dec87e8df6d6e7bcc4bb021b8b3fe900d03b0ce3
   /* ---------------- UI ---------------- */
 
   return (
@@ -228,7 +269,11 @@ function CreateChapter() {
           />
         </Plate>
 
+<<<<<<< HEAD
         {/* ---------------- + BUTTON ---------------- */}
+=======
+        {/* ---------------- INLINE + BUTTON ---------------- */}
+>>>>>>> dec87e8df6d6e7bcc4bb021b8b3fe900d03b0ce3
         {plusPos && (
           <button
             onClick={() => setShowDropdown(true)}
@@ -272,7 +317,11 @@ function CreateChapter() {
                 background: "white",
                 boxShadow: "0 5px 15px rgba(0,0,0,0.2)",
                 borderRadius: 8,
+<<<<<<< HEAD
                 width: 180,
+=======
+                width: 160,
+>>>>>>> dec87e8df6d6e7bcc4bb021b8b3fe900d03b0ce3
                 zIndex: 1001,
               }}
             >
@@ -281,6 +330,7 @@ function CreateChapter() {
                   setShowModal(true);
                   setShowDropdown(false);
                 }}
+<<<<<<< HEAD
                 style={dropdownItem}
               >
                 ➕ Add Question
@@ -295,6 +345,19 @@ function CreateChapter() {
               >
                 🤖 Ask AI
               </button>
+=======
+                style={{
+                  width: "100%",
+                  padding: 10,
+                  border: "none",
+                  background: "transparent",
+                  textAlign: "left",
+                  cursor: "pointer",
+                }}
+              >
+                ➕ Add Question
+              </button>
+>>>>>>> dec87e8df6d6e7bcc4bb021b8b3fe900d03b0ce3
             </div>
           </>
         )}
@@ -319,13 +382,18 @@ function CreateChapter() {
         Cancel
       </button>
 
+<<<<<<< HEAD
       {/* ---------------- QUESTION MODAL ---------------- */}
+=======
+      {/* ---------------- MODAL ---------------- */}
+>>>>>>> dec87e8df6d6e7bcc4bb021b8b3fe900d03b0ce3
       {showModal && (
         <QuestionModal
           onSave={handleAddQuestion}
           onClose={() => setShowModal(false)}
         />
       )}
+<<<<<<< HEAD
 
       {/* ---------------- AI MODAL ---------------- */}
       {showAIModal && (
@@ -373,6 +441,8 @@ function CreateChapter() {
           </div>
         </div>
       )}
+=======
+>>>>>>> dec87e8df6d6e7bcc4bb021b8b3fe900d03b0ce3
     </div>
   );
 }
@@ -418,6 +488,7 @@ const block = {
   margin: 10,
 };
 
+<<<<<<< HEAD
 const dropdownItem = {
   width: "100%",
   padding: 10,
@@ -427,4 +498,6 @@ const dropdownItem = {
   cursor: "pointer",
 };
 
+=======
+>>>>>>> dec87e8df6d6e7bcc4bb021b8b3fe900d03b0ce3
 export default CreateChapter;
