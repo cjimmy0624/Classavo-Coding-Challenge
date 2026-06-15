@@ -87,6 +87,5 @@ User question:
         })
 
     except Exception as e:
-        return JsonResponse({
-            "error": str(e)
-        }, status=500)
+        print("AI ERROR:", str(e))
+        return JsonResponse({"error": str(e)}, status=500)
